@@ -1,0 +1,28 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { getCollection } from 'astro:content';
+const sessions = (await getCollection('sessions')).sort((a,b) => +b.data.pubDate - +a.data.pubDate);
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <BaseHead title="Tutte le sessioni" description="Indice delle sessioni" />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <h1>Tutte le sessioni</h1>
+      <ul>
+        {sessions.map(({ slug, data }) => (
+          <li>
+            <a href={`/sessioni/${slug}`}>{data.title}</a>
+            <small> — {new Date(data.pubDate).toLocaleDateString()}</small>
+          </li>
+        ))}
+      </ul>
+    </main>
+    <Footer />
+  </body>
+</html>

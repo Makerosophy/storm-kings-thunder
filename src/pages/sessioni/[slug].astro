@@ -1,0 +1,45 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import Gallery from '../../components/Gallery.astro';
+import { getCollection, getEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('sessions');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { slug: entry.slug }
+  }));
+}
+
+const { slug } = Astro.props;
+const entry = await getEntry('sessions', slug);
+const { Content, data } = entry;
+---
+<!doctype html>
+<html lang="it">
+  <head>
+    <BaseHead title={data.title} description={data.summary} />
+  </head>
+  <body>
+    <Header />
+    <main>
+      <article>
+        <header>
+          <h1>{data.title}</h1>
+          <p><small>Sessione {data.sessionNumber} • {new Date(data.pubDate).toLocaleDateString()}</small></p>
+          {data.cover && <img src={data.cover} alt={data.title} />}
+        </header>
+        <Content />
+        {data.gallery.length > 0 && (
+          <>
+            <h2>Galleria</h2>
+            <Gallery images={data.gallery} />
+          </>
+        )}
+      </article>
+    </main>
+    <Footer />
+  </body>
+</html>

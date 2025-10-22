@@ -3,6 +3,10 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+import SessionCard from '../components/SessionCard.astro';
+
+const sessions = (await getCollection('sessions')).sort((a, b) => +b.data.pubDate - +a.data.pubDate);
 ---
 
 <!doctype html>
@@ -13,7 +17,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 	<body>
 		<Header />
 		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
+			<h1>Storm King's Thunder — Resoconti</h1>
 			<p>
 				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
 				template serves as a lightweight, minimally-styled starting point for anyone looking to build
@@ -43,7 +47,13 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
 				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
 			</p>
+		<section class="grid">
+                {sessions.map((entry) => <SessionCard entry={entry} />)}
+            </section>
 		</main>
+		<style>
+			.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); }
+		</style>
 		<Footer />
 	</body>
 </html>

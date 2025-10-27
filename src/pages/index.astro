@@ -95,7 +95,7 @@ const previews = await Promise.all(
 			.hero { display: grid; gap: 3rem; grid-template-columns: 1fr 1.4fr; align-items: center; }
 			.hero-body h1 { margin: 0 0 .5rem 0; font-size: 3.25rem; }
 			.hero-body p { font-size: 1.125rem; line-height: 1.9; margin: 0 0 1.25rem 0; }
-			.hero-image { width: 100%; height: auto; max-width: 100%; border-radius: 16px; box-shadow: var(--box-shadow); }
+			.hero-image { width: 100%; height: auto; max-width: 100%; border-radius: 16px; box-shadow: var(--box-shadow); display:block; margin: 0 auto; }
 			.home-actions { margin: 2rem 0 2rem; text-align:center; }
 			.button { display:inline-block; background: var(--accent); color:white; text-decoration:none; padding:.7rem 1.25rem; border-radius:10px; box-shadow: var(--box-shadow); font-weight:700; }
 			.button:hover { background: var(--accent-dark); }
@@ -118,7 +118,10 @@ const previews = await Promise.all(
 			.card .sections li { margin: .1rem 0; }
 			.card:hover { box-shadow: var(--box-shadow); transform: translateY(-2px); }
 			@media (max-width: 720px) {
-				.hero { grid-template-columns: 1fr; gap: 1.5rem; }
+				main { padding: 2rem 1rem; }
+				.hero { grid-template-columns: 1fr; gap: 1.5rem; justify-items: center; }
+				.hero-body { text-align: center; max-width: 40rem; }
+				.hero-body * { overflow-wrap: anywhere; hyphens: auto; }
 				.hero-body h1 { font-size: 2.25rem; }
 				.hero-body p { font-size: 1.05rem; }
 				.carousel .nav.prev { left: .75rem; }

@@ -6,13 +6,16 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "convert:docx": "node scripts/docx-to-posts.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.7",
     "@astrojs/rss": "^4.0.12",
     "@astrojs/sitemap": "^3.6.0",
     "astro": "^5.14.8",
-    "sharp": "^0.34.3"
+    "mammoth": "^1.6.0",
+    "sharp": "^0.34.3",
+    "turndown": "^7.2.0"
   }
 }

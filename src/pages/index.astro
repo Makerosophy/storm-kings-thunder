@@ -3,10 +3,44 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
-import { getCollection } from 'astro:content';
-import SessionCard from '../components/SessionCard.astro';
+import { getCollection, render } from 'astro:content';
+import FormattedDate from '../components/FormattedDate.astro';
+import fs from 'node:fs';
+import path from 'node:path';
 
-const sessions = (await getCollection('sessions')).sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+const posts = (await getCollection('blog'))
+	.filter(({ id }) => /^\d+-avventura$/.test(id))
+	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
+
+const sessionsBase = new URL('../../public/images/sessions/', import.meta.url).pathname;
+function findThumb(num) {
+	const dir = path.join(sessionsBase, String(num).padStart(3, '0'));
+	if (!fs.existsSync(dir)) return '';
+	const file = (fs.readdirSync(dir)
+		.filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
+		.sort()[0]) || '';
+	return file ? `/images/sessions/${String(num).padStart(3, '0')}/${encodeURI(file)}` : '';
+}
+
+const previews = await Promise.all(
+	posts.map(async (p) => {
+		const { headings } = await render(p);
+        const sections = headings
+            .filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== p.data.title.trim())
+            .map((h) => h.text)
+			.slice(0, 3);
+		const dateFromDesc = (p.data.description?.match(/\b\d{2}\/\d{2}\/\d{4}\b/) || [])[0];
+		const dateLabel = dateFromDesc || new Date(p.data.pubDate).toLocaleDateString('it-IT');
+		return {
+			id: p.id,
+			
+			num: parseInt(p.id),
+			dateLabel,
+			sections,
+			thumb: findThumb(parseInt(p.id)),
+		};
+	})
+);
 ---
 
 <!doctype html>
@@ -17,42 +51,79 @@ const sessions = (await getCollection('sessions')).sort((a, b) => +b.data.pubDat
 	<body>
 		<Header />
 		<main>
-			<h1>Storm King's Thunder — Resoconti</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This
-				template serves as a lightweight, minimally-styled starting point for anyone looking to build
-				a personal website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		<section class="grid">
-                {sessions.map((entry) => <SessionCard entry={entry} />)}
-            </section>
+			<section class="hero">
+				<div class="hero-body">
+					<h1>Storm King's Thunder</h1>
+					<p><strong>20 di Mirtul 1486</strong></p>
+					<p>
+						Sono ormai due mesi che gli attacchi dei giganti si fanno sempre più pressanti in quella che viene comunemente definita la frontiera selvaggia. Giganti di diverso tipo si stanno muovendo, avvicinandosi pericolosamente alle zone più civilizzate: le mura di queste città non sarebbero preparate ad attacchi di tale portata. Le varie fazioni si stanno organizzando con l’obiettivo di capire il motivo di tali movimentazioni, e, se possibile, trovare un modo di debellare tale minaccia. Esploratori e avventurieri sono quindi stati inviati ad indagare; i giganti potrebbero mettere a serio rischio l’ordine e la stabilità del nord.
+					</p>
+					<p>
+						Huldur Winedale, esploratore dei nani di Citadel Adbar, Krjiv Linxakasèndalor di Tymanther, iniziato e Osservatore per conto degli Arpisti, Aerendir Frostwood, un eladrin vincolato da un desiderio magico a servire l’Enclave di Smeraldo, e Kyle Greenwich, Paladino degli Antichi, incaricato di aiutare e proteggere l’eladrin, si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford.
+					</p>
+					<p class="intro-link"><a href="/blog/1-avventura/">La loro storia inizia qui →</a></p>
+				</div>
+				<img class="hero-image" src="/images/home/1_Nightstone.png" alt="Nightstone" />
+			</section>
+
+			<p class="home-actions"><a class="button" href="/blog">Indice</a></p>
+			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)">
+				<button class="nav prev" aria-label="Precedenti" onclick="this.nextElementSibling.scrollBy({left:-400,behavior:'smooth'})">←</button>
+				<div class="carousel-track" tabindex="0">
+					{previews.map((post) => (
+						<a class="card" href={`/blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
+							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" />}
+							<span class="num">{post.num}° Avventura</span>
+							<span class="title">{post.title}</span>
+							<strong class="date">{post.dateLabel}</strong>
+							{post.sections.length > 0 && (
+								<ul class="sections">
+									{post.sections.map((s) => (
+										<li>{s}</li>
+									))}
+								</ul>
+							)}
+						</a>
+					))}
+				</div>
+				<button class="nav next" aria-label="Successive" onclick="this.previousElementSibling.scrollBy({left:400,behavior:'smooth'})">→</button>
+			</div>
 		</main>
 		<style>
-			.grid { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); }
+			main { width: 100%; max-width: 100%; padding: 3em 2rem; }
+			.hero { display: grid; gap: 3rem; grid-template-columns: 1fr 1.4fr; align-items: center; }
+			.hero-body h1 { margin: 0 0 .5rem 0; font-size: 3.25rem; }
+			.hero-body p { font-size: 1.125rem; line-height: 1.9; margin: 0 0 1.25rem 0; }
+			.hero-image { width: 100%; height: auto; max-width: 100%; border-radius: 16px; box-shadow: var(--box-shadow); }
+			.home-actions { margin: 2rem 0 2rem; text-align:center; }
+			.button { display:inline-block; background: var(--accent); color:white; text-decoration:none; padding:.7rem 1.25rem; border-radius:10px; box-shadow: var(--box-shadow); font-weight:700; }
+			.button:hover { background: var(--accent-dark); }
+			.intro-link { margin-top: 1rem; }
+			.intro-link a { color: var(--accent); font-weight:700; text-decoration: none; }
+			.intro-link a:hover { text-decoration: underline; }
+			.carousel { position: relative; }
+			.carousel .nav { position:absolute; top:50%; transform: translateY(-50%); background:white; border:1px solid rgba(0,0,0,.08); border-radius:10px; width:44px; height:44px; cursor:pointer; box-shadow: var(--box-shadow); z-index:2; pointer-events:auto; }
+			.carousel .nav.prev { left: 1.25rem; }
+			.carousel .nav.next { right: 2rem; }
+			.carousel-track { display:flex; gap:1.25rem; padding:.5rem 4.5rem 1.25rem 3.75rem; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: relative; z-index:1; }
+			.carousel-track::-webkit-scrollbar { display: none; }
+			.carousel-track:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+			.card { display:flex; flex-direction:column; gap:.5rem; padding:1rem 1.25rem; border:1px solid rgba(0,0,0,.06); border-radius:12px; min-width: 360px; text-decoration:none; color:inherit; box-shadow: var(--box-shadow, none); scroll-snap-align:start; background: linear-gradient(180deg, #fff, rgba(var(--gray-light), .35)); transition: transform .2s ease, box-shadow .2s ease; }
+			.card .thumb { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; }
+			.card .num { font-weight:700; color: var(--accent); font-size: .95rem; letter-spacing:.5px; text-transform: uppercase; }
+			.card .title { font-weight:700; color: rgb(var(--black)); }
+			.card .date { color: rgb(var(--black)); }
+			.card .sections { list-style: none; margin: .25rem 0 0 0; padding: 0; color: rgb(var(--gray)); }
+			.card .sections li { margin: .1rem 0; }
+			.card:hover { box-shadow: var(--box-shadow); transform: translateY(-2px); }
+			@media (max-width: 720px) {
+				.hero { grid-template-columns: 1fr; gap: 1.5rem; }
+				.hero-body h1 { font-size: 2.25rem; }
+				.hero-body p { font-size: 1.05rem; }
+				.carousel .nav.prev { left: .75rem; }
+				.carousel .nav.next { right: 1.25rem; }
+				.carousel-track { padding-left: 3.25rem; padding-right: 3.75rem; }
+			}
 		</style>
 		<Footer />
 	</body>

@@ -19,7 +19,22 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
+      - name: Configure Astro site/base for GitHub Pages
+        run: |
+          if [ "$GITHUB_REPOSITORY_OWNER" = "${GITHUB_REPOSITORY#*/}" ]; then
+            # user/organization site → base '/'
+            echo "BASE=/" >> $GITHUB_ENV
+            echo "SITE=https://$GITHUB_REPOSITORY_OWNER.github.io" >> $GITHUB_ENV
+          else
+            # project site → base '/<repo>'
+            REPO_NAME=${GITHUB_REPOSITORY#*/}
+            echo "BASE=/$REPO_NAME" >> $GITHUB_ENV
+            echo "SITE=https://$GITHUB_REPOSITORY_OWNER.github.io/$REPO_NAME" >> $GITHUB_ENV
+          fi
       - run: npm run build
+        env:
+          SITE: ${{ env.SITE }}
+          BASE: ${{ env.BASE }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
@@ -8,7 +9,13 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, heroImage } = Astro.props;
+const allPosts = (await getCollection('blog'))
+  .filter(({ id }) => /^\d+-avventura$/.test(id))
+  .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+const currentIndex = allPosts.findIndex(p => p.data.title === title);
+const prev = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
+const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
 ---
 
 <html lang="en">
@@ -45,13 +52,11 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.title h1 {
 				margin: 0 0 0.5em 0;
 			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
+			.post-nav { display:grid; grid-template-columns: 1fr auto 1fr; align-items:center; gap:.5rem; margin-top:2rem; }
+			.post-nav a { text-decoration:none; }
+			.post-nav .prev { justify-self:start; }
+			.post-nav .index { justify-self:center; }
+			.post-nav .next { justify-self:end; }
 		</style>
 	</head>
 
@@ -63,21 +68,16 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
 				</div>
 				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
+                    <div class="title">
+                        <h1>{title}</h1>
+                        <hr />
+                    </div>
 					<slot />
+                    <nav class="post-nav">
+                        {prev ? <a class="prev" href={`/blog/${prev.id}/`}>← {prev.id}</a> : <span />}
+                        <a class="index" href="/blog">Indice</a>
+                        {next ? <a class="next" href={`/blog/${next.id}/`}>{next.id} →</a> : <span />}
+                    </nav>
 				</div>
 			</article>
 		</main>

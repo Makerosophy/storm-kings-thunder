@@ -5,11 +5,15 @@ import HeaderLink from './HeaderLink.astro';
 
 <header>
 	<nav>
-		<h2><a href={import.meta.env.BASE_URL.replace(/\/?$/, '/')}>{SITE_TITLE}</a></h2>
+		{(()=>{ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+		return (<h2><a href={base}>{SITE_TITLE}</a></h2>); })()}
 		<div class="internal-links">
-			<HeaderLink href={import.meta.env.BASE_URL.replace(/\/?$/, '/')}>Intro</HeaderLink>
-			<HeaderLink href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/`}>SKT</HeaderLink>
-			<HeaderLink href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }about/`}>Risolutori</HeaderLink>
+			{(()=>{ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+			return (<>
+				<HeaderLink href={base}>Intro</HeaderLink>
+				<HeaderLink href={`${base}blog/`}>SKT</HeaderLink>
+				<HeaderLink href={`${base}about/`}>Risolutori</HeaderLink>
+			</>); })()}
 		</div>
 		<div class="social-links">
 			

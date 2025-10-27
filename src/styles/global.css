@@ -137,10 +137,30 @@ hr {
 }
 @media (max-width: 720px) {
 	body {
-        font-size: 17px;
+		font-size: 18px;
+		line-height: 1.75;
 	}
-    main { padding: 0; }
+	main { padding: 0; }
 }
+
+/* Fluid media inside prose */
+.prose img, .prose video, .prose iframe {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	margin: 1rem auto;
+}
+.prose figure { margin: 1.25rem auto; }
+
+/* Long content handling */
+pre, code, .prose table {
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+.prose table { display: block; }
+
+/* Prevent unintended font scaling behaviour */
+html { -webkit-text-size-adjust: 100%; }
 
 .sr-only {
 	border: 0;

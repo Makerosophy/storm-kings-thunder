@@ -23,7 +23,7 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 		<BaseHead title={title} description={description} />
 		<style>
 			main {
-				width: calc(100% - 2em);
+				width: 100%;
 				max-width: 100%;
 				margin: 0;
 			}
@@ -39,10 +39,9 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 				box-shadow: var(--box-shadow);
 			}
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
+				max-width: 720px;
+				margin: 0 auto;
+				padding: 0 1rem;
 				color: rgb(var(--gray-dark));
 			}
 			.title {
@@ -60,8 +59,11 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 			.post-nav .index { justify-self:center; }
 			.post-nav .next { justify-self:end; }
 
+			@media (min-width: 900px) {
+				.prose { padding: 0 1.25rem; }
+			}
 			@media (max-width: 720px) {
-				.prose { padding: .75em; max-width: calc(100% - 1.25em); }
+				.prose { padding: 0 1rem; }
 				.title { padding: .5em 0; }
 			}
 		</style>

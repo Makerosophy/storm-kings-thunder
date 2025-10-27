@@ -2,6 +2,8 @@
 
 Sito statico in Astro che ospita il diario della campagna Storm King's Thunder.
 
+[![Deploy Astro to Pages](https://github.com/Makerosophy/storm-kings-thunder/actions/workflows/pages.yml/badge.svg)](https://github.com/Makerosophy/storm-kings-thunder/actions/workflows/pages.yml)
+
 ### Sviluppo
 
 ```bash

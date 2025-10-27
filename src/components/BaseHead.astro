@@ -16,18 +16,21 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 const { title, description, image = FallbackImage } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const assetsBase = new URL(base, Astro.site);
 ---
 
 <!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="apple-touch-icon" sizes="180x180" href={`${base}apple-touch-icon.png?v=3`} />
-<link rel="icon" type="image/png" sizes="32x32" href={`${base}favicon-32x32.png?v=3`} />
-<link rel="icon" type="image/png" sizes="16x16" href={`${base}favicon-16x16.png?v=3`} />
-<link rel="icon" href={`${base}favicon.ico?v=3`} sizes="any" />
-<link rel="shortcut icon" href={`${base}favicon.ico?v=3`} />
-<link rel="manifest" href={`${base}site.webmanifest?v=3`} />
-<link rel="sitemap" href={`${base}sitemap-index.xml`} />
+<link rel="apple-touch-icon" sizes="180x180" href={new URL('apple-touch-icon.png', assetsBase)} />
+<link rel="icon" type="image/png" sizes="32x32" href={new URL('favicon-32x32.png', assetsBase)} />
+<link rel="icon" type="image/png" sizes="16x16" href={new URL('favicon-16x16.png', assetsBase)} />
+<link rel="icon" href={new URL('favicon.ico', assetsBase)} sizes="any" />
+<link rel="icon" type="image/svg+xml" href={new URL('favicon.svg', assetsBase)} />
+<link rel="mask-icon" href={new URL('favicon.svg', assetsBase)} color="#6d28d9" />
+<link rel="shortcut icon" href={new URL('favicon.ico', assetsBase)} />
+<link rel="manifest" href={new URL('site.webmanifest', assetsBase)} />
+<link rel="sitemap" href={new URL('sitemap-index.xml', assetsBase)} />
 <link
 	rel="alternate"
 	type="application/rss+xml"
@@ -37,8 +40,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 <meta name="generator" content={Astro.generator} />
 
 <!-- Font preloads -->
-<link rel="preload" href={`${base}fonts/atkinson-regular.woff`} as="font" type="font/woff" crossorigin />
-<link rel="preload" href={`${base}fonts/atkinson-bold.woff`} as="font" type="font/woff" crossorigin />
+<link rel="preload" href={new URL('fonts/atkinson-regular.woff', assetsBase)} as="font" type="font/woff" crossorigin />
+<link rel="preload" href={new URL('fonts/atkinson-bold.woff', assetsBase)} as="font" type="font/woff" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />

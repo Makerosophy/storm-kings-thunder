@@ -74,9 +74,9 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
                     </div>
 					<slot />
 					<nav class="post-nav">
-						{prev ? <a class="prev" href={`${import.meta.env.BASE_URL}blog/${prev.id}/`}>← {prev.id}</a> : <span />}
-						<a class="index" href={`${import.meta.env.BASE_URL}blog/`}>Indice</a>
-						{next ? <a class="next" href={`${import.meta.env.BASE_URL}blog/${next.id}/`}>{next.id} →</a> : <span />}
+						{prev ? <a class="prev" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/${prev.id}/`}>← {prev.id}</a> : <span />}
+						<a class="index" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/`}>Indice</a>
+						{next ? <a class="next" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/${next.id}/`}>{next.id} →</a> : <span />}
 					</nav>
 				</div>
 			</article>

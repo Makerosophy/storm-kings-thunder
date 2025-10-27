@@ -13,13 +13,14 @@ const posts = (await getCollection('blog'))
 	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
 const sessionsBase = new URL('../../public/images/sessions/', import.meta.url).pathname;
+const base = import.meta.env.BASE_URL;
 function findThumb(num) {
 	const dir = path.join(sessionsBase, String(num).padStart(3, '0'));
 	if (!fs.existsSync(dir)) return '';
 	const file = (fs.readdirSync(dir)
 		.filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
 		.sort()[0]) || '';
-	return file ? `/images/sessions/${String(num).padStart(3, '0')}/${encodeURI(file)}` : '';
+	return file ? `${base}images/sessions/${String(num).padStart(3, '0')}/${encodeURI(file)}` : '';
 }
 
 const previews = await Promise.all(
@@ -61,17 +62,17 @@ const previews = await Promise.all(
 					<p>
 						Huldur Winedale, esploratore dei nani di Citadel Adbar, Krjiv Linxakasèndalor di Tymanther, iniziato e Osservatore per conto degli Arpisti, Aerendir Frostwood, un eladrin vincolato da un desiderio magico a servire l’Enclave di Smeraldo, e Kyle Greenwich, Paladino degli Antichi, incaricato di aiutare e proteggere l’eladrin, si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford.
 					</p>
-					<p class="intro-link"><a href="/blog/1-avventura/">La loro storia inizia qui →</a></p>
+					<p class="intro-link"><a href={`${import.meta.env.BASE_URL}blog/1-avventura/`}>La loro storia inizia qui →</a></p>
 				</div>
-				<img class="hero-image" src="/images/home/1_Nightstone.png" alt="Nightstone" />
+                <img class="hero-image" src={`${import.meta.env.BASE_URL}images/home/1_Nightstone.png`} alt="Nightstone" />
 			</section>
 
-			<p class="home-actions"><a class="button" href="/blog">Indice</a></p>
+			<p class="home-actions"><a class="button" href={`${import.meta.env.BASE_URL}blog`}>Indice</a></p>
 			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)">
 				<button class="nav prev" aria-label="Precedenti" onclick="this.nextElementSibling.scrollBy({left:-400,behavior:'smooth'})">←</button>
 				<div class="carousel-track" tabindex="0">
 					{previews.map((post) => (
-						<a class="card" href={`/blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
+						<a class="card" href={`${import.meta.env.BASE_URL}blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
 							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" />}
 							<span class="num">{post.num}° Avventura</span>
 							<span class="title">{post.title}</span>

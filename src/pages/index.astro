@@ -5,6 +5,7 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getCollection, render } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
+import RisolutoriOg from '../assets/blog-placeholder-about.jpg';
 import fs from 'node:fs';
 import path from 'node:path';
 
@@ -34,7 +35,7 @@ const previews = await Promise.all(
 		const dateLabel = dateFromDesc || new Date(p.data.pubDate).toLocaleDateString('it-IT');
 		return {
 			id: p.id,
-			
+			title: p.data.title,
 			num: parseInt(p.id),
 			dateLabel,
 			sections,
@@ -47,7 +48,7 @@ const previews = await Promise.all(
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image={RisolutoriOg} />
 	</head>
 	<body>
 		<Header />

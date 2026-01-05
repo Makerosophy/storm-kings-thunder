@@ -9,7 +9,8 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, heroImage } = Astro.props;
+const { title, description, heroImage, heroImages } = Astro.props;
+const heroList = (Array.isArray(heroImages) ? heroImages : heroImage ? [heroImage] : []).filter(Boolean);
 const allPosts = (await getCollection('blog'))
   .filter(({ id }) => /^\d+-avventura$/.test(id))
   .sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -38,6 +39,8 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 				border-radius: 12px;
 				box-shadow: var(--box-shadow);
 			}
+			.hero-grid { display: grid; gap: .75rem; }
+			.hero-grid.two { grid-template-columns: 1fr 1fr; }
 			.prose {
 				max-width: 720px;
 				margin: 0 auto;
@@ -63,6 +66,7 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 				.prose { padding: 0 1.25rem; }
 			}
 			@media (max-width: 720px) {
+				.hero-grid.two { grid-template-columns: 1fr; }
 				.prose { padding: 0 1rem; }
 				.title { padding: .5em 0; }
 			}
@@ -74,7 +78,13 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 		<main>
 			<article>
 				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+					{heroList.length > 0 && (
+						<div class={`hero-grid ${heroList.length >= 2 ? 'two' : ''}`}>
+							{heroList.map((img) => (
+								<Image width={1020} height={510} src={img} alt="" />
+							))}
+						</div>
+					)}
 				</div>
 				<div class="prose">
                     <div class="title">

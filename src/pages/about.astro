@@ -1,12 +1,13 @@
 ---
 import AboutHeroImage from '../../public/images/about/Copertina.png';
+import AboutHeroImage2 from '../../public/images/about/Copertina_2.png';
 import Layout from '../layouts/BlogPost.astro';
 ---
 
 <Layout
     title="Risolutori"
     description="Il nostro diario di campagna di Storm King's Thunder"
-    heroImage={AboutHeroImage}
+    heroImages={[AboutHeroImage, AboutHeroImage2]}
 >
     <p>
         In queste pagine, troverete il
@@ -21,4 +22,5 @@ import Layout from '../layouts/BlogPost.astro';
         immagini generate tramite chat-gpt (che verranno migliorate successivamente alla conclusione della campagna) 
 		e un indice chiaro per navigare tra le sessioni.
     </p>
+
 </Layout>

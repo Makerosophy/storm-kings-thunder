@@ -10,7 +10,7 @@ const links = [
 ];
 ---
 
-<header class="site-header">
+<header class="site-header" data-mobile-header>
 	<div class="site-header__inner">
 		<a class="brand" href={base} aria-label={`${SITE_TITLE}, torna alla home`}>
 			<span class="brand-mark">SKT</span>
@@ -161,6 +161,16 @@ const links = [
 	@media (max-width: 720px) {
 		.site-header {
 			padding-top: 0.75rem;
+			transition:
+				transform 0.22s ease,
+				opacity 0.22s ease;
+			will-change: transform;
+		}
+
+		.site-header.is-hidden {
+			transform: translateY(calc(-100% - 0.75rem));
+			opacity: 0;
+			pointer-events: none;
 		}
 
 		.site-header__inner {
@@ -230,3 +240,50 @@ const links = [
 		}
 	}
 </style>
+<script is:inline>
+	const header = document.querySelector('[data-mobile-header]');
+
+	if (header instanceof HTMLElement) {
+		const media = window.matchMedia('(max-width: 720px)');
+		const menu = header.querySelector('.site-menu');
+		let lastY = window.scrollY;
+		let ticking = false;
+
+		const update = () => {
+			if (!media.matches) {
+				header.classList.remove('is-hidden');
+				lastY = window.scrollY;
+				ticking = false;
+				return;
+			}
+
+			const currentY = window.scrollY;
+			const nearTop = currentY <= 24;
+			const scrollingUp = currentY < lastY;
+			const shouldHide = !nearTop && !scrollingUp;
+
+			header.classList.toggle('is-hidden', shouldHide);
+
+			if (shouldHide && menu instanceof HTMLDetailsElement) {
+				menu.open = false;
+			}
+
+			lastY = currentY;
+			ticking = false;
+		};
+
+		update();
+
+		window.addEventListener(
+			'scroll',
+			() => {
+				if (ticking) return;
+				ticking = true;
+				window.requestAnimationFrame(update);
+			},
+			{ passive: true }
+		);
+
+		window.addEventListener('resize', update, { passive: true });
+	}
+</script>

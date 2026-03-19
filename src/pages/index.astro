@@ -246,6 +246,15 @@ const previews = await Promise.all(
 				position: relative;
 			}
 
+			@supports (content-visibility: auto) {
+				.hero,
+				.home-section,
+				.carousel {
+					content-visibility: auto;
+					contain-intrinsic-size: 1px 900px;
+				}
+			}
+
 			.carousel .nav {
 				position: absolute;
 				top: 50%;

@@ -68,7 +68,7 @@ body {
 	font-size: clamp(1rem, 0.96rem + 0.3vw, 1.15rem);
 	line-height: 1.8;
 	min-height: 100vh;
-	background-attachment: fixed;
+	background-attachment: scroll;
 }
 
 body::before {
@@ -318,6 +318,33 @@ button {
 
 .prose h1 {
 	font-size: clamp(2rem, 1.5rem + 1.1vw, 3rem);
+}
+
+@media (hover: hover) and (pointer: fine) and (min-width: 721px) {
+	body {
+		background-attachment: fixed;
+	}
+}
+
+@media (hover: none), (pointer: coarse), (max-width: 900px) {
+	:root {
+		--box-shadow:
+			0 8px 20px rgba(var(--storm-night-rgb), 0.1),
+			0 14px 30px rgba(var(--storm-night-rgb), 0.12);
+	}
+
+	html {
+		background:
+			linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 1), rgba(var(--storm-mist-rgb), 0.22));
+	}
+
+	body {
+		background: linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.2), transparent 42%);
+	}
+
+	body::before {
+		display: none;
+	}
 }
 
 .prose h2 {

@@ -16,19 +16,4 @@ const blog = defineCollection({
     }),
 });
 
-const sessions = defineCollection({
-  loader: glob({ base: './src/content/sessions', pattern: '**/*.{md,mdx}' }),
-  schema: z.object({
-    title: z.string(),
-    pubDate: z.coerce.date(),
-    sessionNumber: z.number(),
-    cover: z.string().optional(),
-    tags: z.array(z.string()).default([]),
-    characters: z.array(z.string()).default([]),
-    aiImages: z.boolean().default(true),
-    summary: z.string().min(10),
-    gallery: z.array(z.object({ src: z.string(), alt: z.string() })).default([]),
-  }),
-});
-
-export const collections = { blog, sessions };
+export const collections = { blog };

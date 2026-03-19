@@ -4,7 +4,6 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getCollection, render } from 'astro:content';
-import FormattedDate from '../components/FormattedDate.astro';
 import RisolutoriOg from '../assets/blog-placeholder-about.jpg';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -15,6 +14,8 @@ const posts = (await getCollection('blog'))
 
 const sessionsBase = new URL('../../public/images/sessions/', import.meta.url).pathname;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const totalPosts = posts.length;
+
 function findThumb(num) {
 	const dir = path.join(sessionsBase, String(num).padStart(3, '0'));
 	if (!fs.existsSync(dir)) return '';
@@ -46,34 +47,61 @@ const previews = await Promise.all(
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} image={RisolutoriOg} />
 	</head>
 	<body>
 		<Header />
-		<main class="container">
+		<main class="container home-page">
 			<section class="hero">
 				<div class="hero-body">
+					<p class="eyebrow">Diario di campagna • D&amp;D 5e</p>
 					<h1>Storm King's Thunder</h1>
-					<p><strong>30 di Ches 1486</strong></p>
-					<p>
+					<p class="hero-lead">
+						Un archivio narrativo semplice da consultare, costruito per seguire l’intera campagna con immagini, capitoli e rimandi rapidi tra le sessioni.
+					</p>
+					<p class="hero-date"><strong>30 di Ches 1486</strong></p>
+					<p class="hero-copy">
 						Sono ormai due mesi che gli attacchi dei giganti si fanno sempre più pressanti in quella che viene comunemente definita la frontiera selvaggia. Giganti di diverso tipo si stanno muovendo, avvicinandosi pericolosamente alle zone più civilizzate: le mura di queste città non sarebbero preparate ad attacchi di tale portata. Le varie fazioni si stanno organizzando con l’obiettivo di capire il motivo di tali movimentazioni, e, se possibile, trovare un modo di debellare tale minaccia. Esploratori e avventurieri sono quindi stati inviati ad indagare; i giganti potrebbero mettere a serio rischio l’ordine e la stabilità del nord.
 					</p>
-					<p>
+					<p class="hero-copy">
 						Huldur Winedale, esploratore dei nani di Citadel Adbar, Krjiv Linxakasèndalor di Tymanther, iniziato e Osservatore per conto degli Arpisti, Aerendir Frostwood, un eladrin vincolato da un desiderio magico a servire l’Enclave di Smeraldo, e Kyle Greenwich, Paladino degli Antichi, incaricato di aiutare e proteggere l’eladrin, si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford.
 					</p>
-                    <p class="intro-link"><a href={`${base}blog/1-avventura/`}>La loro storia inizia qui →</a></p>
+					<div class="hero-actions">
+						<a class="button" href={`${base}blog/1-avventura/`}>Inizia dal primo capitolo</a>
+						<a class="button secondary" href={`${base}blog/`}>Sfoglia l’indice completo</a>
+					</div>
+					<ul class="hero-stats" aria-label="Panoramica rapida della campagna">
+						<li><strong>{totalPosts}</strong><span>avventure</span></li>
+						<li><strong>4</strong><span>protagonisti iniziali</span></li>
+						<li><strong>1</strong><span>diario illustrato</span></li>
+					</ul>
 				</div>
-                <img class="hero-image" src={`${base}images/home/1_Nightstone.png`} alt="Nightstone" />
+				<div class="hero-media">
+					<img class="hero-image" src={`${base}images/home/1_Nightstone.png`} alt="Nightstone" />
+					<div class="hero-panel">
+						<p class="eyebrow">Punto di partenza</p>
+						<h2>Nightstone</h2>
+						<p>Il viaggio inizia ai margini della frontiera, con un villaggio colpito dai giganti e quattro personaggi costretti a muoversi insieme.</p>
+						<a class="hero-panel-link" href={`${base}about/`}>Chi sono i Risolutori</a>
+					</div>
+				</div>
 			</section>
 
-            <p class="home-actions"><a class="button" href={`${base}blog/`}>Indice</a></p>
-			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)">
-				<button class="nav prev" aria-label="Precedenti" onclick="this.nextElementSibling.scrollBy({left:-400,behavior:'smooth'})">←</button>
+			<section class="home-section">
+				<div class="section-copy">
+					<p class="eyebrow">Archivio sessioni</p>
+					<h2>Capitoli rapidi da consultare</h2>
+					<p>Ogni card riassume l’avventura e porta ai momenti principali. Su desktop si scorre a schede, su mobile resta leggibile e usabile con il solo touch.</p>
+				</div>
+			</section>
+
+			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)" data-carousel>
+				<button class="nav prev" type="button" aria-label="Precedenti" data-direction="-1">←</button>
 				<div class="carousel-track" tabindex="0">
 					{previews.map((post) => (
-                        <a class="card" href={`${base}blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
+						<a class="card" href={`${base}blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
 							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" />}
 							<span class="num">{post.num}° Avventura</span>
 							<span class="title">{post.title}</span>
@@ -88,48 +116,281 @@ const previews = await Promise.all(
 						</a>
 					))}
 				</div>
-				<button class="nav next" aria-label="Successive" onclick="this.previousElementSibling.scrollBy({left:400,behavior:'smooth'})">→</button>
+				<button class="nav next" type="button" aria-label="Successive" data-direction="1">→</button>
 			</div>
 		</main>
 		<style>
-			main { width: 100%; max-width: 100%; padding: 3em 2rem; }
-			.hero { display: grid; gap: 3rem; grid-template-columns: 1fr 1.4fr; align-items: center; }
-			.hero-body h1 { margin: 0 0 .5rem 0; font-size: 3.25rem; }
-			.hero-body p { font-size: 1.125rem; line-height: 1.9; margin: 0 0 1.25rem 0; }
-			.hero-image { width: 100%; height: auto; max-width: 100%; border-radius: 16px; box-shadow: var(--box-shadow); display:block; margin: 0 auto; }
-			.home-actions { margin: 2rem 0 2rem; text-align:center; }
-			.button { display:inline-block; background: var(--accent); color:white; text-decoration:none; padding:.7rem 1.25rem; border-radius:10px; box-shadow: var(--box-shadow); font-weight:700; }
-			.button:hover { background: var(--accent-dark); }
-			.intro-link { margin-top: 1rem; }
-			.intro-link a { color: var(--accent); font-weight:700; text-decoration: none; }
-			.intro-link a:hover { text-decoration: underline; }
-			.carousel { position: relative; }
-			.carousel .nav { position:absolute; top:50%; transform: translateY(-50%); background:white; border:1px solid rgba(0,0,0,.08); border-radius:10px; width:44px; height:44px; cursor:pointer; box-shadow: var(--box-shadow); z-index:2; pointer-events:auto; }
-			.carousel .nav.prev { left: 1.25rem; }
-			.carousel .nav.next { right: 2rem; }
-			.carousel-track { display:flex; gap:1.25rem; padding:.5rem 4.5rem 1.25rem 3.75rem; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; position: relative; z-index:1; }
-			.carousel-track::-webkit-scrollbar { display: none; }
-			.carousel-track:focus { outline: 2px solid var(--accent); outline-offset: 2px; }
-			.card { display:flex; flex-direction:column; gap:.5rem; padding:1rem 1.25rem; border:1px solid rgba(0,0,0,.06); border-radius:12px; min-width: 360px; text-decoration:none; color:inherit; box-shadow: var(--box-shadow, none); scroll-snap-align:start; background: linear-gradient(180deg, #fff, rgba(var(--gray-light), .35)); transition: transform .2s ease, box-shadow .2s ease; }
-			.card .thumb { width: 100%; height: 140px; object-fit: cover; border-radius: 10px; }
-			.card .num { font-weight:700; color: var(--accent); font-size: .95rem; letter-spacing:.5px; text-transform: uppercase; }
-			.card .title { font-weight:700; color: rgb(var(--black)); }
-			.card .date { color: rgb(var(--black)); }
-			.card .sections { list-style: none; margin: .25rem 0 0 0; padding: 0; color: rgb(var(--gray)); }
-			.card .sections li { margin: .1rem 0; }
-			.card:hover { box-shadow: var(--box-shadow); transform: translateY(-2px); }
+			.home-page {
+				padding: 2.2rem 0 4rem;
+			}
+
+			.hero {
+				display: grid;
+				grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+				align-items: center;
+				gap: 2rem;
+				padding: 2rem;
+				border: 1px solid rgba(var(--border), 0.45);
+				border-radius: var(--radius);
+				background:
+					linear-gradient(135deg, rgba(var(--storm-ivory-rgb), 0.82), rgba(var(--storm-mist-rgb), 0.26)),
+					radial-gradient(circle at top right, rgba(var(--storm-sea-rgb), 0.2), transparent 34%);
+				box-shadow: var(--box-shadow);
+			}
+
+			.hero-body {
+				min-width: 0;
+			}
+
+			.hero-body h1 {
+				margin-bottom: 0.75rem;
+			}
+
+			.hero-lead {
+				font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+				line-height: 1.7;
+				color: rgb(var(--black));
+				max-width: 32rem;
+			}
+
+			.hero-date {
+				margin-bottom: 0.75rem;
+				color: var(--accent-dark);
+			}
+
+			.hero-copy {
+				max-width: 42rem;
+			}
+
+			.hero-actions {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.85rem;
+				margin-top: 1.75rem;
+			}
+
+			.hero-stats {
+				list-style: none;
+				margin: 1.5rem 0 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+				gap: 0.85rem;
+			}
+
+			.hero-stats li {
+				padding: 1rem;
+				border: 1px solid rgba(var(--border), 0.35);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.6);
+			}
+
+			.hero-stats strong,
+			.hero-stats span {
+				display: block;
+			}
+
+			.hero-stats strong {
+				font-size: 1.5rem;
+				color: rgb(var(--black));
+			}
+
+			.hero-stats span {
+				font-size: 0.92rem;
+				color: rgb(var(--gray));
+			}
+
+			.hero-media {
+				display: grid;
+				gap: 1rem;
+			}
+
+			.hero-image {
+				width: 100%;
+				display: block;
+				aspect-ratio: 5 / 4;
+				object-fit: cover;
+				border-radius: calc(var(--radius) - 4px);
+				box-shadow: var(--box-shadow);
+			}
+
+			.hero-panel {
+				padding: 1.25rem;
+				border: 1px solid rgba(var(--border), 0.4);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.92);
+			}
+
+			.hero-panel h2 {
+				margin-bottom: 0.5rem;
+			}
+
+			.hero-panel p {
+				margin-bottom: 0.8rem;
+			}
+
+			.hero-panel-link {
+				font-weight: 700;
+				text-decoration: none;
+			}
+
+			.home-section {
+				padding: 2.5rem 0 1rem;
+			}
+
+			.section-copy {
+				max-width: 40rem;
+			}
+
+			.carousel {
+				position: relative;
+			}
+
+			.carousel .nav {
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 3rem;
+				height: 3rem;
+				border: 1px solid rgba(var(--border), 0.55);
+				border-radius: 50%;
+				background: rgba(var(--storm-ivory-rgb), 0.92);
+				color: rgb(var(--black));
+				cursor: pointer;
+				box-shadow: var(--box-shadow);
+				z-index: 2;
+			}
+
+			.carousel .nav.prev {
+				left: 0.3rem;
+			}
+
+			.carousel .nav.next {
+				right: 0.3rem;
+			}
+
+			.carousel-track {
+				display: flex;
+				gap: 1rem;
+				padding: 0.5rem 3.8rem 1rem;
+				overflow-x: auto;
+				scroll-snap-type: x mandatory;
+				-webkit-overflow-scrolling: touch;
+				scrollbar-width: none;
+			}
+
+			.carousel-track::-webkit-scrollbar {
+				display: none;
+			}
+
+			.card {
+				display: flex;
+				flex-direction: column;
+				gap: 0.65rem;
+				min-width: min(22rem, 78vw);
+				padding: 1rem;
+				border: 1px solid rgba(var(--border), 0.45);
+				border-radius: calc(var(--radius) - 6px);
+				text-decoration: none;
+				color: inherit;
+				scroll-snap-align: start;
+				background:
+					linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.92), rgba(var(--storm-mist-rgb), 0.24));
+				box-shadow: var(--box-shadow);
+			}
+
+			.card:hover {
+				transform: translateY(-4px);
+			}
+
+			.card .thumb {
+				width: 100%;
+				height: 12rem;
+				object-fit: cover;
+				border-radius: var(--radius-sm);
+			}
+
+			.card .num {
+				font-weight: 700;
+				font-size: 0.78rem;
+				letter-spacing: 0.16em;
+				text-transform: uppercase;
+				color: var(--accent-dark);
+			}
+
+			.card .title {
+				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+				font-size: 1.45rem;
+				line-height: 1.1;
+				color: rgb(var(--black));
+			}
+
+			.card .date {
+				color: rgb(var(--gray-dark));
+			}
+
+			.card .sections {
+				list-style: none;
+				margin: 0.25rem 0 0;
+				padding: 0;
+				color: rgb(var(--gray));
+			}
+
+			.card .sections li + li {
+				margin-top: 0.28rem;
+			}
+
 			@media (max-width: 720px) {
-				main { padding: 2rem 1rem; }
-				.hero { grid-template-columns: 1fr; gap: 1.5rem; justify-items: center; }
-				.hero-body { text-align: left; max-width: none; width: 100%; }
-				.hero-body * { overflow-wrap: anywhere; hyphens: auto; }
-				.hero-body h1 { font-size: 2.25rem; }
-				.hero-body p { font-size: 1.05rem; }
-				.carousel .nav.prev { left: .75rem; }
-				.carousel .nav.next { right: 1.25rem; }
-				.carousel-track { padding-left: 3.25rem; padding-right: 3.75rem; }
+				.home-page {
+					padding-top: 1.5rem;
+				}
+
+				.hero {
+					grid-template-columns: 1fr;
+					padding: 1.2rem;
+					gap: 1.3rem;
+				}
+
+				.hero-stats {
+					grid-template-columns: 1fr;
+				}
+
+				.hero-panel {
+					padding: 1rem;
+				}
+
+				.carousel .nav {
+					display: none;
+				}
+
+				.carousel-track {
+					padding-inline: 0;
+				}
+
+				.card {
+					min-width: 86vw;
+				}
 			}
 		</style>
+		<script is:inline>
+			document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+				const track = carousel.querySelector('.carousel-track');
+				if (!track) return;
+
+				carousel.querySelectorAll('[data-direction]').forEach((button) => {
+					button.addEventListener('click', () => {
+						const direction = Number(button.getAttribute('data-direction')) || 1;
+						const amount = Math.max(track.clientWidth * 0.82, 280) * direction;
+
+						try {
+							track.scrollBy({ left: amount, behavior: 'smooth' });
+						} catch {
+							track.scrollLeft += amount;
+						}
+					});
+				});
+			});
+		</script>
 		<Footer />
 	</body>
 </html>

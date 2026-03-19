@@ -10,52 +10,196 @@ const rawPosts = (await getCollection('blog'))
 	.filter(({ id }) => /^\d+-avventura$/.test(id))
 	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const totalPosts = rawPosts.length;
 
 const posts = await Promise.all(
-    rawPosts.map(async (entry) => {
-        const { headings } = await render(entry);
-        const sections = headings
-            .filter((h) => h.depth === 2 || h.depth === 3)
-            .map(({ depth, slug, text }) => ({ depth, slug, text }));
-        return { entry, sections };
-    })
+	rawPosts.map(async (entry) => {
+		const { headings } = await render(entry);
+		const sections = headings
+			.filter((h) => h.depth === 2 || h.depth === 3)
+			.map(({ depth, slug, text }) => ({ depth, slug, text }));
+		return { entry, sections };
+	})
 );
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-        <style>
-            main { width: 100%; display: flex; justify-content: center; }
-            section { width: 100%; max-width: 960px; margin: 0 auto; background: #fff; border:1px solid rgba(0,0,0,.06); border-radius: 12px; box-shadow: var(--box-shadow); padding: 1.25rem; }
-            .toc { list-style: none; margin: 0; padding: 0; }
-            .toc > li { margin: 1rem 0; }
-            .toc-post { display:inline-flex; align-items:baseline; gap:.5rem; text-decoration:none; color: rgb(var(--black)); }
-            .toc-post .title { font-weight: 700; color: var(--accent); }
-            .sections { list-style: none; margin: .5rem 0 0 1.25rem; padding: 0; border-left: 2px solid rgba(0,0,0,.06); }
-            .sections li { margin: .25rem 0; padding-left:.75rem; }
-            .sections li.depth-3 { margin-left: .85rem; opacity: .9; }
-            .sections li.depth-3 a { font-size: .95rem; }
-            .sections a { text-decoration: none; color: inherit; }
-            .sections a:hover, .toc-post:hover { color: var(--accent); }
+		<style>
+			.archive-page {
+				padding: 2.2rem 0 4rem;
+			}
+
+			.archive-shell {
+				padding: 2rem;
+				border: 1px solid rgba(var(--border), 0.45);
+				border-radius: var(--radius);
+				background:
+					linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.92), rgba(var(--storm-mist-rgb), 0.24));
+				box-shadow: var(--box-shadow);
+			}
+
+			.archive-intro {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: end;
+				justify-content: space-between;
+				gap: 1.25rem;
+				padding-bottom: 1.5rem;
+				border-bottom: 1px solid rgba(var(--border), 0.55);
+			}
+
+			.archive-intro p:last-child {
+				max-width: 34rem;
+				margin-bottom: 0;
+			}
+
+			.archive-meta {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.65rem;
+				padding: 0.8rem 1rem;
+				border: 1px solid rgba(var(--border), 0.5);
+				border-radius: 999px;
+				background: rgba(var(--storm-ivory-rgb), 0.78);
+				color: rgb(var(--gray-dark));
+				font-weight: 700;
+			}
+
+			.toc {
+				list-style: none;
+				margin: 1.8rem 0 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 1rem;
+			}
+
+			.toc > li {
+				padding: 1.2rem;
+				border: 1px solid rgba(var(--border), 0.4);
+				border-radius: calc(var(--radius) - 6px);
+				background: rgba(var(--storm-ivory-rgb), 0.65);
+			}
+
+			.toc-post {
+				display: flex;
+				align-items: center;
+				gap: 0.9rem;
+				text-decoration: none;
+				color: rgb(var(--black));
+			}
+
+			.toc-post:hover {
+				color: var(--accent-dark);
+			}
+
+			.toc-post .num {
+				display: inline-grid;
+				place-items: center;
+				width: 2.8rem;
+				height: 2.8rem;
+				border-radius: 50%;
+				background: rgba(var(--storm-mist-rgb), 0.18);
+				color: var(--accent-dark);
+				font-weight: 700;
+				flex: 0 0 auto;
+			}
+
+			.toc-post .title {
+				display: block;
+				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+				font-size: 1.45rem;
+				line-height: 1.05;
+				color: rgb(var(--black));
+			}
+
+			.toc-post .count {
+				display: block;
+				margin-top: 0.25rem;
+				font-size: 0.92rem;
+				color: rgb(var(--gray));
+			}
+
+			.sections {
+				list-style: none;
+				margin: 1rem 0 0;
+				padding: 0;
+				border-top: 1px solid rgba(var(--border), 0.45);
+			}
+
+			.sections li {
+				margin-top: 0.75rem;
+			}
+
+			.sections li.depth-3 {
+				padding-left: 0.85rem;
+				opacity: 0.92;
+			}
+
+			.sections a {
+				text-decoration: none;
+				color: rgb(var(--gray-dark));
+			}
+
+			.sections a:hover {
+				color: var(--accent-dark);
+			}
+
+			@media (max-width: 900px) {
+				.toc {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			@media (max-width: 720px) {
+				.archive-page {
+					padding-top: 1.5rem;
+				}
+
+				.archive-shell {
+					padding: 1.2rem;
+				}
+
+				.archive-intro {
+					align-items: start;
+				}
+
+				.toc > li {
+					padding: 1rem;
+				}
+			}
 		</style>
 	</head>
 	<body>
 		<Header />
-		<main class="container">
-			<section>
+		<main class="container archive-page">
+			<section class="archive-shell">
+				<div class="archive-intro">
+					<div>
+						<p class="eyebrow">Archivio</p>
+						<h1>Indice delle avventure</h1>
+						<p>Navigazione rapida per capitoli, sottosezioni e momenti chiave della campagna.</p>
+					</div>
+					<p class="archive-meta">{totalPosts} capitoli pubblicati</p>
+				</div>
 				<ol class="toc">
 					{posts.map(({ entry, sections }) => (
-                    <li>
-                        <a class="toc-post" href={`${base}blog/${entry.id}/`}>
-                            <span class="title">{entry.data.title}</span>
-                        </a>
+						<li>
+							<a class="toc-post" href={`${base}blog/${entry.id}/`}>
+								<span class="num">{parseInt(entry.id)}</span>
+								<span>
+									<span class="title">{entry.data.title}</span>
+									<span class="count">{sections.length} snodi narrativi</span>
+								</span>
+							</a>
 							{sections.length > 0 && (
 								<ul class="sections">
 									{sections.map(({ depth, slug, text }) => (
 										<li class={`depth-${depth}`}>
-                                            <a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
+											<a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
 										</li>
 									))}
 								</ul>

@@ -1,66 +1,145 @@
 ---
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
-<header>
-	<nav>
-		{(()=>{ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-		return (<h2><a href={base}>{SITE_TITLE}</a></h2>); })()}
-		<div class="internal-links">
-			{(()=>{ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-			return (<>
-				<HeaderLink href={base}>Intro</HeaderLink>
-				<HeaderLink href={`${base}blog/`}>SKT</HeaderLink>
-				<HeaderLink href={`${base}about/`}>Risolutori</HeaderLink>
-			</>); })()}
-		</div>
-		<div class="social-links">
-			
-		</div>
-	</nav>
+<header class="site-header">
+	<div class="site-header__inner">
+		<a class="brand" href={base} aria-label={`${SITE_TITLE}, torna alla home`}>
+			<span class="brand-mark">SKT</span>
+			<span class="brand-copy">
+				<strong>{SITE_TITLE}</strong>
+				<small>Diario illustrato di campagna</small>
+			</span>
+		</a>
+		<nav class="site-nav" aria-label="Navigazione principale">
+			<HeaderLink href={base}>Intro</HeaderLink>
+			<HeaderLink href={`${base}blog/`}>Avventure</HeaderLink>
+			<HeaderLink href={`${base}about/`}>Risolutori</HeaderLink>
+		</nav>
+	</div>
 </header>
 <style>
-	header {
-		margin: 0;
-		padding: 0 1em;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		padding: 1rem 0 0;
 	}
 
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
-	}
-	nav {
+	.site-header__inner {
+		width: min(100% - 2rem, var(--page-width));
+		margin: 0 auto;
+		padding: 0.9rem 1rem;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 1rem 1.5rem;
+		border: 1px solid rgba(var(--border), 0.45);
+		border-radius: 999px;
+		background: rgba(var(--storm-ivory-rgb), 0.86);
+		box-shadow: var(--box-shadow);
+		backdrop-filter: blur(14px);
+		-webkit-backdrop-filter: blur(14px);
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
+
+	.brand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.85rem;
+		color: rgb(var(--black));
 		text-decoration: none;
+		margin: 0;
 	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
+
+	.brand-mark {
+		display: inline-grid;
+		place-items: center;
+		width: 2.85rem;
+		height: 2.85rem;
+		border-radius: 50%;
+		background:
+			linear-gradient(180deg, rgba(var(--storm-mist-rgb), 1), rgba(var(--storm-night-rgb), 1));
+		color: rgb(var(--storm-ivory-rgb));
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+		font-size: 1.05rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		box-shadow: 0 14px 24px rgba(var(--storm-night-rgb), 0.22);
 	}
-	.social-links,
-	.social-links a {
+
+	.brand-copy {
 		display: flex;
+		flex-direction: column;
+		gap: 0.12rem;
 	}
+
+	.brand-copy strong {
+		font-size: 0.98rem;
+		line-height: 1.1;
+	}
+
+	.brand-copy small {
+		font-size: 0.76rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: rgb(var(--gray));
+	}
+
+	.site-nav {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.45rem;
+	}
+
+	.site-nav :global(a) {
+		padding: 0.8rem 1rem;
+		border-radius: 999px;
+		color: rgb(var(--black));
+		text-decoration: none;
+		font-weight: 600;
+	}
+
+	.site-nav :global(a:hover) {
+		background: rgba(var(--storm-ivory-rgb), 0.8);
+	}
+
+	.site-nav :global(a.active) {
+		background: rgba(var(--storm-mist-rgb), 0.14);
+		color: var(--accent-dark);
+		box-shadow: inset 0 0 0 1px rgba(var(--storm-mist-rgb), 0.16);
+	}
+
 	@media (max-width: 720px) {
-		.social-links {
-			display: none;
+		.site-header {
+			padding-top: 0.75rem;
 		}
-		nav { flex-wrap: wrap; gap: .25rem 0; }
-		.internal-links { width: 100%; display: flex; justify-content: center; flex-wrap: wrap; }
-		nav a { padding: .75em .5em; }
+
+		.site-header__inner {
+			width: min(100% - 1rem, var(--page-width));
+			padding: 0.9rem;
+			border-radius: 28px;
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.brand {
+			justify-content: center;
+		}
+
+		.site-nav {
+			justify-content: center;
+		}
+
+		.site-nav :global(a) {
+			flex: 1 1 0;
+			min-width: 0;
+			padding: 0.8rem 0.7rem;
+			text-align: center;
+		}
 	}
 </style>

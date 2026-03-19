@@ -1,23 +1,33 @@
-/*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
- */
-
 :root {
-    /* Azure & purple palette */
-    --accent: #6d28d9; /* purple */
-    --accent-dark: #4c1d95;
-    --black: 16, 18, 28;
-    --gray: 120, 120, 150; /* cool gray */
-    --gray-light: 232, 236, 247; /* light azure tint */
-    --gray-dark: 30, 28, 48;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--storm-night: #0c2c55;
+	--storm-sea: #296374;
+	--storm-mist: #629fad;
+	--storm-ivory: #ededce;
+	--storm-night-rgb: 12, 44, 85;
+	--storm-sea-rgb: 41, 99, 116;
+	--storm-mist-rgb: 98, 159, 173;
+	--storm-ivory-rgb: 237, 237, 206;
+	--accent: var(--storm-mist);
+	--accent-dark: var(--storm-sea);
+	--accent-soft: var(--storm-ivory);
+	--black: var(--storm-night-rgb);
+	--gray: var(--storm-sea-rgb);
+	--gray-light: var(--storm-ivory-rgb);
+	--gray-dark: var(--storm-night-rgb);
+	--paper: var(--storm-ivory-rgb);
+	--surface: var(--storm-ivory-rgb);
+	--surface-strong: var(--storm-mist-rgb);
+	--border: var(--storm-mist-rgb);
 	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%), 0 16px 32px
-		rgba(var(--gray), 33%);
-    --radius: 12px;
+		0 10px 30px rgba(var(--storm-night-rgb), 0.12),
+		0 28px 60px rgba(var(--storm-night-rgb), 0.18);
+	--radius: 24px;
+	--radius-sm: 16px;
+	--page-width: 1200px;
+	--content-width: 760px;
+	--header-height: 88px;
 }
+
 @font-face {
 	font-family: "Atkinson";
 	src: url("/fonts/atkinson-regular.woff") format("woff");
@@ -32,42 +42,69 @@
 	font-style: normal;
 	font-display: swap;
 }
+
+html {
+	scroll-behavior: smooth;
+	-webkit-text-size-adjust: 100%;
+	background:
+		radial-gradient(circle at top left, rgba(var(--storm-mist-rgb), 0.38), transparent 34%),
+		radial-gradient(circle at top right, rgba(var(--storm-sea-rgb), 0.2), transparent 28%),
+		radial-gradient(circle at 50% -10%, rgba(var(--storm-ivory-rgb), 0.75), transparent 20%),
+		linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 1), rgba(var(--storm-mist-rgb), 0.38));
+}
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
+	background:
+		linear-gradient(135deg, rgba(var(--storm-ivory-rgb), 0.42), transparent 55%),
+		linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.24), transparent 42%);
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-    overflow-x: hidden;
+	overflow-x: hidden;
 	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
-}
-/* elevate visuals */
-header, .card, .hero-image img { box-shadow: var(--box-shadow); }
-button, .button { border: none; }
-/* smooth scrolling */
-html { scroll-behavior: smooth; }
-main {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
+	font-size: clamp(1rem, 0.96rem + 0.3vw, 1.15rem);
+	line-height: 1.8;
+	min-height: 100vh;
+	background-attachment: fixed;
 }
 
-/* Consistent page gutters like Medium */
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	background-image:
+		linear-gradient(rgba(var(--storm-sea-rgb), 0.045) 1px, transparent 1px),
+		linear-gradient(90deg, rgba(var(--storm-sea-rgb), 0.045) 1px, transparent 1px);
+	background-size: 24px 24px;
+	mask-image: linear-gradient(180deg, rgba(var(--storm-night-rgb), 0.4), transparent 72%);
+}
+
+::selection {
+	background: rgba(var(--storm-mist-rgb), 0.3);
+	color: rgb(var(--black));
+}
+
+main {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	padding: 0;
+}
+
 .container,
 .prose {
-    padding-left: 1rem;
-    padding-right: 1rem;
+	width: min(100% - 2rem, var(--page-width));
+	margin: 0 auto;
 }
-@media (min-width: 900px) {
-    .container,
-    .prose { padding-left: 1.25rem; padding-right: 1.25rem; }
+
+.prose {
+	width: min(100% - 2rem, var(--content-width));
 }
+
 h1,
 h2,
 h3,
@@ -76,39 +113,74 @@ h5,
 h6 {
 	margin: 0 0 0.5rem 0;
 	color: rgb(var(--black));
-	line-height: 1.2;
+	line-height: 1.08;
+	font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Cormorant Garamond", serif;
+	letter-spacing: -0.02em;
 }
+
 h1 {
-	font-size: 3.052em;
+	font-size: clamp(2.5rem, 1.8rem + 2vw, 4.5rem);
 }
+
 h2 {
-	font-size: 2.441em;
+	font-size: clamp(1.85rem, 1.35rem + 1.1vw, 2.75rem);
 }
+
 h3 {
-	font-size: 1.953em;
+	font-size: clamp(1.45rem, 1.15rem + 0.7vw, 2rem);
 }
+
 h4 {
-	font-size: 1.563em;
+	font-size: 1.35em;
 }
+
 h5 {
 	font-size: 1.25em;
 }
+
 strong,
 b {
 	font-weight: 700;
 }
+
 a {
 	color: var(--accent);
+	text-decoration-thickness: 0.08em;
+	text-underline-offset: 0.18em;
+	transition:
+		color 0.2s ease,
+		border-color 0.2s ease,
+		background-color 0.2s ease,
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
 }
+
 a:hover {
-	color: var(--accent);
+	color: var(--accent-dark);
 }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+	outline: 3px solid rgba(var(--storm-mist-rgb), 0.28);
+	outline-offset: 3px;
+}
+
+p,
+ul,
+ol {
+	margin-top: 0;
+}
+
 p {
-	margin-bottom: 1em;
+	margin-bottom: 1.1em;
 }
+
 .prose p {
-	margin-bottom: 2em;
+	margin-bottom: 1.35em;
 }
+
 textarea {
 	width: 100%;
 	font-size: 16px;
@@ -118,60 +190,168 @@ input {
 }
 table {
 	width: 100%;
+	border-collapse: collapse;
 }
+
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
 }
+
 code {
 	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	background-color: rgba(var(--storm-ivory-rgb), 0.92);
+	border-radius: 6px;
 }
+
 pre {
 	padding: 1.5em;
-	border-radius: 8px;
+	border-radius: var(--radius-sm);
+	background: rgba(var(--storm-night-rgb), 0.97);
+	color: rgb(var(--storm-ivory-rgb));
 }
+
 pre > code {
 	all: unset;
 }
+
 blockquote {
 	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0px;
-	font-size: 1.333em;
-}
-hr {
-	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
-}
-@media (max-width: 720px) {
-	body {
-		font-size: 18px;
-		line-height: 1.75;
-	}
-	main { padding: 0; }
+	padding: 0.25rem 0 0.25rem 1.1rem;
+	margin: 1.5rem 0;
+	font-size: 1.15em;
+	color: rgb(var(--black));
+	background: rgba(var(--storm-ivory-rgb), 0.54);
+	border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-/* Fluid media inside prose */
-.prose img, .prose video, .prose iframe {
+hr {
+	border: none;
+	border-top: 1px solid rgba(var(--border), 0.7);
+	margin: 2rem 0;
+}
+
+button {
+	font: inherit;
+}
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.55rem;
+	padding: 0.9rem 1.35rem;
+	border: 1px solid rgba(var(--storm-sea-rgb), 0.28);
+	border-radius: 999px;
+	background: linear-gradient(180deg, rgba(var(--storm-mist-rgb), 0.96), rgba(var(--storm-sea-rgb), 0.98));
+	color: rgb(var(--storm-ivory-rgb));
+	text-decoration: none;
+	font-weight: 700;
+	box-shadow: var(--box-shadow);
+}
+
+.button:hover {
+	color: rgb(var(--storm-ivory-rgb));
+	transform: translateY(-1px);
+	box-shadow:
+		0 14px 35px rgba(var(--storm-night-rgb), 0.2),
+		0 22px 45px rgba(var(--storm-night-rgb), 0.14);
+}
+
+.button.secondary {
+	background: rgba(var(--storm-ivory-rgb), 0.76);
+	color: rgb(var(--black));
+	border-color: rgba(var(--storm-mist-rgb), 0.75);
+	box-shadow: none;
+}
+
+.button.secondary:hover {
+	color: rgb(var(--black));
+	background: rgba(var(--storm-ivory-rgb), 0.95);
+}
+
+.eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-size: 0.82rem;
+	font-weight: 700;
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--accent-dark);
+}
+
+.eyebrow::before {
+	content: "";
+	width: 2.6rem;
+	height: 1px;
+	background: currentColor;
+}
+
+.prose img,
+.prose video,
+.prose iframe {
 	display: block;
 	max-width: 100%;
 	height: auto;
 	margin: 1rem auto;
+	box-shadow: var(--box-shadow);
 }
-.prose figure { margin: 1.25rem auto; }
 
-/* Long content handling */
-pre, code, .prose table {
+.prose figure {
+	margin: 1.6rem auto;
+}
+
+.prose figcaption {
+	margin-top: 0.7rem;
+	font-size: 0.9rem;
+	color: rgb(var(--gray));
+	text-align: center;
+}
+
+.prose h1,
+.prose h2,
+.prose h3 {
+	scroll-margin-top: calc(var(--header-height) + 1rem);
+}
+
+.prose h1 {
+	font-size: clamp(2rem, 1.5rem + 1.1vw, 3rem);
+}
+
+.prose h2 {
+	margin-top: 2.6rem;
+	margin-bottom: 0.9rem;
+}
+
+.prose h3 {
+	margin-top: 2rem;
+	margin-bottom: 0.7rem;
+}
+
+.prose ul,
+.prose ol {
+	padding-left: 1.2rem;
+}
+
+.prose li + li {
+	margin-top: 0.35rem;
+}
+
+pre,
+code,
+.prose table {
 	overflow-x: auto;
 	-webkit-overflow-scrolling: touch;
 }
-.prose table { display: block; }
 
-/* Prevent unintended font scaling behaviour */
-html { -webkit-text-size-adjust: 100%; }
+.prose table {
+	display: block;
+	border-radius: var(--radius-sm);
+	background: rgba(var(--storm-ivory-rgb), 0.55);
+	box-shadow: inset 0 0 0 1px rgba(var(--border), 0.45);
+}
 
 .sr-only {
 	border: 0;
@@ -187,6 +367,29 @@ html { -webkit-text-size-adjust: 100%; }
 	clip: rect(1px, 1px, 1px, 1px);
 	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+	:root {
+		--header-height: 132px;
+	}
+
+	body {
+		line-height: 1.75;
+	}
+
+	.container,
+	.prose {
+		width: min(100% - 1.25rem, var(--page-width));
+	}
+
+	.eyebrow {
+		font-size: 0.75rem;
+		letter-spacing: 0.14em;
+	}
+
+	.button {
+		width: 100%;
+	}
 }

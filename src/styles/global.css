@@ -313,7 +313,7 @@ button {
 .prose h1,
 .prose h2,
 .prose h3 {
-	scroll-margin-top: calc(var(--header-height) + 1rem);
+	scroll-margin-top: 0.35rem;
 }
 
 .prose h1 {

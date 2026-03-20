@@ -10,7 +10,7 @@ const links = [
 ];
 ---
 
-<header class="site-header" data-mobile-header>
+<header class="site-header" data-auto-header>
 	<div class="site-header__inner">
 		<a class="brand" href={base} aria-label={`${SITE_TITLE}, torna alla home`}>
 			<span class="brand-mark">SKT</span>
@@ -40,6 +40,16 @@ const links = [
 		top: 0;
 		z-index: 20;
 		padding: 1rem 0 0;
+		transition:
+			transform 0.22s ease,
+			opacity 0.22s ease;
+		will-change: transform;
+	}
+
+	.site-header.is-hidden {
+		transform: translateY(calc(-100% - 1rem));
+		opacity: 0;
+		pointer-events: none;
 	}
 
 	.site-header__inner {
@@ -161,16 +171,6 @@ const links = [
 	@media (max-width: 720px) {
 		.site-header {
 			padding-top: 0.75rem;
-			transition:
-				transform 0.22s ease,
-				opacity 0.22s ease;
-			will-change: transform;
-		}
-
-		.site-header.is-hidden {
-			transform: translateY(calc(-100% - 0.75rem));
-			opacity: 0;
-			pointer-events: none;
 		}
 
 		.site-header__inner {
@@ -241,28 +241,32 @@ const links = [
 	}
 </style>
 <script is:inline>
-	const header = document.querySelector('[data-mobile-header]');
+	const header = document.querySelector('[data-auto-header]');
 
 	if (header instanceof HTMLElement) {
-		const media = window.matchMedia('(max-width: 720px)');
 		const menu = header.querySelector('.site-menu');
 		let lastY = window.scrollY;
 		let ticking = false;
 
 		const update = () => {
-			if (!media.matches) {
+			const currentY = window.scrollY;
+			const nearTop = currentY <= 24;
+			const delta = currentY - lastY;
+
+			if (nearTop) {
 				header.classList.remove('is-hidden');
-				lastY = window.scrollY;
+				lastY = currentY;
 				ticking = false;
 				return;
 			}
 
-			const currentY = window.scrollY;
-			const nearTop = currentY <= 24;
-			const scrollingUp = currentY < lastY;
-			const shouldHide = !nearTop && !scrollingUp;
+			if (delta > 6) {
+				header.classList.add('is-hidden');
+			} else if (delta < -6) {
+				header.classList.remove('is-hidden');
+			}
 
-			header.classList.toggle('is-hidden', shouldHide);
+			const shouldHide = header.classList.contains('is-hidden');
 
 			if (shouldHide && menu instanceof HTMLDetailsElement) {
 				menu.open = false;

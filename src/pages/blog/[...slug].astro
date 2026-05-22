@@ -1,6 +1,9 @@
 ---
+import fs from 'node:fs/promises';
+import path from 'node:path';
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
+import { excerptFromMarkdown } from '../../utils/seo';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
@@ -12,9 +15,13 @@ export async function getStaticPaths() {
 type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const source = await fs.readFile(path.join(process.cwd(), 'src/content/blog', `${post.id}.mdx`), 'utf8');
+const words = source.match(/\p{L}[\p{L}\p{N}'’:-]*/gu)?.length ?? 0;
+const readingMinutes = Math.max(1, Math.ceil(words / 220));
+const seoDescription = excerptFromMarkdown(source);
 ---
 
-<BlogPost {...post.data} postId={post.id}>
+<BlogPost {...post.data} description={seoDescription} postId={post.id} headings={headings} readingMinutes={readingMinutes}>
 	<Content />
 </BlogPost>

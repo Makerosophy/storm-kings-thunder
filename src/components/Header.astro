@@ -11,6 +11,7 @@ const links = [
 ---
 
 <header class="site-header" data-auto-header>
+	<a class="skip-link" href="#content">Salta al contenuto</a>
 	<div class="site-header__inner">
 		<a class="brand" href={base} aria-label={`${SITE_TITLE}, torna alla home`}>
 			<span class="brand-mark">SKT</span>
@@ -44,6 +45,26 @@ const links = [
 			transform 0.22s ease,
 			opacity 0.22s ease;
 		will-change: transform;
+	}
+
+	.skip-link {
+		position: absolute;
+		top: 0.65rem;
+		left: max(1rem, calc((100vw - var(--page-width)) / 2));
+		z-index: 30;
+		padding: 0.75rem 1rem;
+		border-radius: 999px;
+		background: rgb(var(--black));
+		color: rgb(var(--storm-ivory-rgb));
+		font-weight: 700;
+		text-decoration: none;
+		box-shadow: var(--box-shadow);
+		transform: translateY(calc(-100% - 1rem));
+		transition: transform 0.16s ease;
+	}
+
+	.skip-link:focus-visible {
+		transform: translateY(0);
 	}
 
 	.site-header.is-hidden {
@@ -244,11 +265,19 @@ const links = [
 	const header = document.querySelector('[data-auto-header]');
 
 	if (header instanceof HTMLElement) {
+		const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 		const menu = header.querySelector('.site-menu');
 		let lastY = window.scrollY;
 		let ticking = false;
 
 		const update = () => {
+			if (reduceMotion.matches) {
+				header.classList.remove('is-hidden');
+				lastY = window.scrollY;
+				ticking = false;
+				return;
+			}
+
 			const currentY = window.scrollY;
 			const nearTop = currentY <= 24;
 			const delta = currentY - lastY;
@@ -289,5 +318,10 @@ const links = [
 		);
 
 		window.addEventListener('resize', update, { passive: true });
+		if ('addEventListener' in reduceMotion) {
+			reduceMotion.addEventListener('change', update);
+		} else {
+			reduceMotion.addListener(update);
+		}
 	}
 </script>

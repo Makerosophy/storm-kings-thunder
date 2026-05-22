@@ -1,11 +1,10 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection, render } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
+const pageDescription = 'Indice ricercabile delle avventure di Storm King\'s Thunder: capitoli, scene e luoghi chiave del diario dei Risolutori.';
 const rawPosts = (await getCollection('blog'))
 	.filter(({ id }) => /^\d+-avventura$/.test(id))
 	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
@@ -16,17 +15,19 @@ const posts = await Promise.all(
 	rawPosts.map(async (entry) => {
 		const { headings } = await render(entry);
 		const sections = headings
-			.filter((h) => h.depth === 2 || h.depth === 3)
+			.filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== entry.data.title.trim())
 			.map(({ depth, slug, text }) => ({ depth, slug, text }));
 		return { entry, sections };
 	})
 );
+const totalSections = posts.reduce((total, post) => total + post.sections.length, 0);
+const latestPost = rawPosts.at(-1);
 ---
 
 <!doctype html>
 <html lang="it">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title="Indice delle avventure" description={pageDescription} />
 		<style>
 			.archive-page {
 				padding: 2.2rem 0 4rem;
@@ -68,6 +69,67 @@ const posts = await Promise.all(
 				font-weight: 700;
 			}
 
+			.archive-tools {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
+				gap: 1rem;
+				align-items: center;
+				margin-top: 1.5rem;
+			}
+
+			.search-field {
+				display: grid;
+				gap: 0.35rem;
+			}
+
+			.search-field label {
+				color: var(--accent-dark);
+				font-size: 0.78rem;
+				font-weight: 700;
+				letter-spacing: 0.14em;
+				text-transform: uppercase;
+			}
+
+			.search-field input {
+				width: 100%;
+				padding: 0.95rem 1rem;
+				border: 1px solid rgba(var(--border), 0.55);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.86);
+				color: rgb(var(--black));
+				font: inherit;
+			}
+
+			.search-field input::placeholder {
+				color: rgba(var(--storm-night-rgb), 0.48);
+			}
+
+			.archive-summary {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: flex-end;
+				gap: 0.6rem;
+			}
+
+			.archive-summary span,
+			.archive-summary a {
+				display: inline-flex;
+				align-items: center;
+				min-height: 2.9rem;
+				padding: 0.65rem 0.9rem;
+				border: 1px solid rgba(var(--border), 0.45);
+				border-radius: 999px;
+				background: rgba(var(--storm-ivory-rgb), 0.72);
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+				font-weight: 700;
+			}
+
+			.archive-summary a:hover {
+				color: var(--accent-dark);
+				transform: translateY(-1px);
+			}
+
 			.toc {
 				list-style: none;
 				margin: 1.8rem 0 0;
@@ -82,6 +144,10 @@ const posts = await Promise.all(
 				border: 1px solid rgba(var(--border), 0.4);
 				border-radius: calc(var(--radius) - 6px);
 				background: rgba(var(--storm-ivory-rgb), 0.65);
+			}
+
+			.toc > li[hidden] {
+				display: none;
 			}
 
 			.toc-post {
@@ -123,11 +189,45 @@ const posts = await Promise.all(
 				color: rgb(var(--gray));
 			}
 
+			.sections-details {
+				margin-top: 1rem;
+				border-top: 1px solid rgba(var(--border), 0.45);
+			}
+
+			.sections-details summary {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 0.8rem;
+				padding-top: 0.8rem;
+				color: var(--accent-dark);
+				cursor: pointer;
+				font-weight: 700;
+				list-style: none;
+			}
+
+			.sections-details summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.sections-details summary::after {
+				content: "+";
+				display: inline-grid;
+				place-items: center;
+				width: 1.55rem;
+				height: 1.55rem;
+				border-radius: 50%;
+				background: rgba(var(--storm-mist-rgb), 0.16);
+			}
+
+			.sections-details[open] summary::after {
+				content: "-";
+			}
+
 			.sections {
 				list-style: none;
-				margin: 1rem 0 0;
+				margin: 0.8rem 0 0;
 				padding: 0;
-				border-top: 1px solid rgba(var(--border), 0.45);
 			}
 
 			.sections li {
@@ -148,7 +248,28 @@ const posts = await Promise.all(
 				color: var(--accent-dark);
 			}
 
+			.empty-state {
+				margin: 1.5rem 0 0;
+				padding: 1rem;
+				border: 1px solid rgba(var(--border), 0.42);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.72);
+				color: rgb(var(--gray));
+			}
+
+			.empty-state[hidden] {
+				display: none;
+			}
+
 			@media (max-width: 900px) {
+				.archive-tools {
+					grid-template-columns: 1fr;
+				}
+
+				.archive-summary {
+					justify-content: flex-start;
+				}
+
 				.toc {
 					grid-template-columns: 1fr;
 				}
@@ -167,6 +288,21 @@ const posts = await Promise.all(
 					align-items: start;
 				}
 
+				.archive-summary {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.archive-summary span,
+				.archive-summary a {
+					justify-content: center;
+					border-radius: var(--radius-sm);
+				}
+
+				.archive-summary a {
+					grid-column: 1 / -1;
+				}
+
 				.toc > li {
 					padding: 1rem;
 				}
@@ -175,19 +311,30 @@ const posts = await Promise.all(
 	</head>
 	<body>
 		<Header />
-		<main class="container archive-page">
+		<main id="content" tabindex="-1" class="container archive-page">
 			<section class="archive-shell">
 				<div class="archive-intro">
 					<div>
 						<p class="eyebrow">Archivio</p>
 						<h1>Indice delle avventure</h1>
-						<p>Navigazione rapida per capitoli, sottosezioni e momenti chiave della campagna.</p>
+						<p>Trova un capitolo, una scena o un luogo senza perdere il filo della campagna.</p>
 					</div>
 					<p class="archive-meta">{totalPosts} capitoli pubblicati</p>
 				</div>
-				<ol class="toc">
+				<div class="archive-tools" data-archive-tools>
+					<div class="search-field">
+						<label for="archive-search">Cerca nell’archivio</label>
+						<input id="archive-search" type="search" placeholder="Nightstone, Harshnag, Waterdeep..." autocomplete="off" data-archive-search />
+					</div>
+					<div class="archive-summary" aria-live="polite">
+						<span data-archive-count>{totalPosts} capitoli</span>
+						<span>{totalSections} scene</span>
+						{latestPost && <a href={`${base}blog/${latestPost.id}/`}>Ultimo capitolo</a>}
+					</div>
+				</div>
+				<ol class="toc" data-archive-list>
 					{posts.map(({ entry, sections }) => (
-						<li>
+						<li data-archive-item data-search={`${entry.data.title} ${sections.map(({ text }) => text).join(' ')}`.toLocaleLowerCase('it-IT')}>
 							<a class="toc-post" href={`${base}blog/${entry.id}/`}>
 								<span class="num">{parseInt(entry.id)}</span>
 								<span>
@@ -196,19 +343,60 @@ const posts = await Promise.all(
 								</span>
 							</a>
 							{sections.length > 0 && (
-								<ul class="sections">
-									{sections.map(({ depth, slug, text }) => (
-										<li class={`depth-${depth}`}>
-											<a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
-										</li>
-									))}
-								</ul>
+								<details class="sections-details">
+									<summary>Scene principali</summary>
+									<ul class="sections">
+										{sections.map(({ depth, slug, text }) => (
+											<li class={`depth-${depth}`}>
+												<a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
+											</li>
+										))}
+									</ul>
+								</details>
 							)}
 						</li>
 					))}
 				</ol>
+				<p class="empty-state" hidden data-archive-empty>Nessun capitolo trovato.</p>
 			</section>
 		</main>
 		<Footer />
+		<script is:inline>
+			const search = document.querySelector('[data-archive-search]');
+			const items = Array.from(document.querySelectorAll('[data-archive-item]'));
+			const count = document.querySelector('[data-archive-count]');
+			const empty = document.querySelector('[data-archive-empty]');
+
+			if (search instanceof HTMLInputElement) {
+				const update = () => {
+					const query = search.value.trim().toLocaleLowerCase('it-IT');
+					let visible = 0;
+
+					items.forEach((item) => {
+						const text = item.getAttribute('data-search') || '';
+						const match = query.length === 0 || text.includes(query);
+						item.hidden = !match;
+						if (match) visible += 1;
+
+						const details = item.querySelector('details');
+						if (details instanceof HTMLDetailsElement) {
+							details.open = query.length > 0 && match;
+						}
+					});
+
+					if (count) {
+						const label = visible === 1 ? 'capitolo trovato' : 'capitoli trovati';
+						count.textContent = query.length > 0 ? `${visible} ${label}` : `${items.length} capitoli`;
+					}
+
+					if (empty) {
+						empty.hidden = visible > 0;
+					}
+				};
+
+				search.addEventListener('input', update);
+				update();
+			}
+		</script>
 	</body>
 </html>

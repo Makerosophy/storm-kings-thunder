@@ -15,22 +15,29 @@ const posts = (await getCollection('blog'))
 const sessionsBase = new URL('../../public/images/sessions/', import.meta.url).pathname;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const totalPosts = posts.length;
+const firstPost = posts[0];
+const latestPost = posts.at(-1);
 
 function findThumb(num) {
 	const dir = path.join(sessionsBase, String(num).padStart(3, '0'));
 	if (!fs.existsSync(dir)) return '';
-	const file = (fs.readdirSync(dir)
+	const file = (fs
+		.readdirSync(dir)
 		.filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
-		.sort()[0]) || '';
+		.sort((a, b) => {
+			const aWebp = a.endsWith('.webp') ? 0 : 1;
+			const bWebp = b.endsWith('.webp') ? 0 : 1;
+			return aWebp - bWebp || a.localeCompare(b);
+		})[0]) || '';
 	return file ? `${base}images/sessions/${String(num).padStart(3, '0')}/${encodeURI(file)}` : '';
 }
 
 const previews = await Promise.all(
 	posts.map(async (p) => {
 		const { headings } = await render(p);
-        const sections = headings
-            .filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== p.data.title.trim())
-            .map((h) => h.text)
+		const sections = headings
+			.filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== p.data.title.trim())
+			.map((h) => h.text)
 			.slice(0, 3);
 		const dateFromDesc = (p.data.description?.match(/\b\d{2}\/\d{2}\/\d{4}\b/) || [])[0];
 		const dateLabel = dateFromDesc || new Date(p.data.pubDate).toLocaleDateString('it-IT');
@@ -53,23 +60,20 @@ const previews = await Promise.all(
 	</head>
 	<body>
 		<Header />
-		<main class="container home-page">
+		<main id="content" tabindex="-1" class="container home-page">
 			<section class="hero">
 				<div class="hero-body">
 					<p class="eyebrow">Diario di campagna • D&amp;D 5e</p>
 					<h1>Storm King's Thunder</h1>
 					<p class="hero-lead">
-						Un archivio narrativo semplice da consultare, costruito per seguire l’intera campagna con immagini, capitoli e rimandi rapidi tra le sessioni.
-					</p>
-					<p class="hero-date"><strong>30 di Ches 1486</strong></p>
-					<p class="hero-copy">
-						Sono ormai due mesi che gli attacchi dei giganti si fanno sempre più pressanti in quella che viene comunemente definita la frontiera selvaggia. Giganti di diverso tipo si stanno muovendo, avvicinandosi pericolosamente alle zone più civilizzate: le mura di queste città non sarebbero preparate ad attacchi di tale portata. Le varie fazioni si stanno organizzando con l’obiettivo di capire il motivo di tali movimentazioni, e, se possibile, trovare un modo di debellare tale minaccia. Esploratori e avventurieri sono quindi stati inviati ad indagare; i giganti potrebbero mettere a serio rischio l’ordine e la stabilità del nord.
+						Il diario illustrato dei Risolutori, dalla caduta su Nightstone fino alle domande rivolte all’Occhio del Padre di Tutto.
 					</p>
 					<p class="hero-copy">
-						Huldur Winedale, esploratore dei nani di Citadel Adbar, Krjiv Linxakasèndalor di Tymanther, iniziato e Osservatore per conto degli Arpisti, Aerendir Frostwood, un eladrin vincolato da un desiderio magico a servire l’Enclave di Smeraldo, e Kyle Greenwich, Paladino degli Antichi, incaricato di aiutare e proteggere l’eladrin, si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford.
+						Una cronaca di campagna pensata per essere letta come una storia seriale: capitoli ordinati, scene navigabili e immagini dei momenti chiave.
 					</p>
 					<div class="hero-actions">
-						<a class="button" href={`${base}blog/1-avventura/`}>Inizia dal primo capitolo</a>
+						{firstPost && <a class="button" href={`${base}blog/${firstPost.id}/`}>Inizia dal primo capitolo</a>}
+						{latestPost && <a class="button secondary" href={`${base}blog/${latestPost.id}/`}>Leggi l’ultimo capitolo</a>}
 						<a class="button secondary" href={`${base}blog/`}>Sfoglia l’indice completo</a>
 					</div>
 					<ul class="hero-stats" aria-label="Panoramica rapida della campagna">
@@ -79,30 +83,58 @@ const previews = await Promise.all(
 					</ul>
 				</div>
 				<div class="hero-media">
-					<img class="hero-image" src={`${base}images/home/1_Nightstone.png`} alt="Nightstone" />
+					<img
+						class="hero-image"
+						src={`${base}images/home/1_Nightstone.webp`}
+						alt="Nightstone"
+						width="1024"
+						height="1024"
+						decoding="async"
+						fetchpriority="high"
+					/>
 					<div class="hero-panel">
 						<p class="eyebrow">Punto di partenza</p>
 						<h2>Nightstone</h2>
-						<p>Il viaggio inizia ai margini della frontiera, con un villaggio colpito dai giganti e quattro personaggi costretti a muoversi insieme.</p>
+						<p>Il viaggio inizia ai margini della Frontiera Selvaggia, in un villaggio ferito dai giganti e da un mistero lasciato nel cratere della sua piazza.</p>
 						<a class="hero-panel-link" href={`${base}about/`}>Chi sono i Risolutori</a>
 					</div>
+				</div>
+			</section>
+
+			<section class="prologue">
+				<div class="prologue-date">
+					<span>30 di Ches 1486</span>
+				</div>
+				<div class="prologue-copy">
+					<p>
+						Sono ormai due mesi che gli attacchi dei giganti si fanno sempre più pressanti in quella che viene comunemente definita la Frontiera Selvaggia. Le varie fazioni si stanno organizzando per capire il motivo di tali movimentazioni e, se possibile, trovare un modo di debellare la minaccia.
+					</p>
+					<p>
+						Huldur Winedale, Krjiv Linxakasèndalor, Aerendir Frostwood e Kyle Greenwich si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford. Da quel momento, il Nord smette di essere solo una mappa.
+					</p>
 				</div>
 			</section>
 
 			<section class="home-section">
 				<div class="section-copy">
 					<p class="eyebrow">Archivio sessioni</p>
-					<h2>Capitoli rapidi da consultare</h2>
-					<p>Ogni card riassume l’avventura e porta ai momenti principali. Su desktop si scorre a schede, su mobile resta leggibile e usabile con il solo touch.</p>
+					<h2>La campagna, capitolo dopo capitolo</h2>
+					<p>Dalle prime tracce lasciate dai giganti fino ai segreti custoditi nei luoghi più antichi del Nord.</p>
 				</div>
+				{latestPost && (
+					<a class="latest-link" href={`${base}blog/${latestPost.id}/`}>
+						<span>Ultimo aggiornamento</span>
+						<strong>{latestPost.data.title}</strong>
+					</a>
+				)}
 			</section>
 
 			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)" data-carousel>
 				<button class="nav prev" type="button" aria-label="Precedenti" data-direction="-1">←</button>
-				<div class="carousel-track" tabindex="0">
+				<div class="carousel-track" tabindex="0" aria-label="Elenco avventure">
 					{previews.map((post) => (
 						<a class="card" href={`${base}blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
-							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" />}
+							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" decoding="async" />}
 							<span class="num">{post.num}° Avventura</span>
 							<span class="title">{post.title}</span>
 							<strong class="date">{post.dateLabel}</strong>
@@ -153,13 +185,8 @@ const previews = await Promise.all(
 				max-width: 32rem;
 			}
 
-			.hero-date {
-				margin-bottom: 0.75rem;
-				color: var(--accent-dark);
-			}
-
 			.hero-copy {
-				max-width: 42rem;
+				max-width: 34rem;
 			}
 
 			.hero-actions {
@@ -234,12 +261,78 @@ const previews = await Promise.all(
 				text-decoration: none;
 			}
 
+			.prologue {
+				display: grid;
+				grid-template-columns: minmax(10rem, 0.34fr) minmax(0, 1fr);
+				gap: 2rem;
+				padding: 2.2rem 0 0.5rem;
+				align-items: start;
+			}
+
+			.prologue-date {
+				position: sticky;
+				top: calc(var(--header-height) + 1rem);
+				color: var(--accent-dark);
+				font-weight: 700;
+			}
+
+			.prologue-date span {
+				display: inline-block;
+				padding-top: 0.2rem;
+				border-top: 1px solid currentColor;
+			}
+
+			.prologue-copy {
+				max-width: 48rem;
+				font-size: clamp(1.05rem, 1rem + 0.28vw, 1.24rem);
+				line-height: 1.78;
+			}
+
+			.prologue-copy p:last-child {
+				margin-bottom: 0;
+			}
+
 			.home-section {
+				display: flex;
+				align-items: end;
+				justify-content: space-between;
+				gap: 1.25rem;
 				padding: 2.5rem 0 1rem;
 			}
 
 			.section-copy {
 				max-width: 40rem;
+			}
+
+			.latest-link {
+				display: grid;
+				gap: 0.2rem;
+				min-width: min(22rem, 100%);
+				padding: 1rem 1.1rem;
+				border: 1px solid rgba(var(--border), 0.45);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.72);
+				color: rgb(var(--black));
+				text-decoration: none;
+			}
+
+			.latest-link span {
+				color: var(--accent-dark);
+				font-size: 0.78rem;
+				font-weight: 700;
+				letter-spacing: 0.14em;
+				text-transform: uppercase;
+			}
+
+			.latest-link strong {
+				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+				font-size: 1.35rem;
+				line-height: 1.12;
+			}
+
+			.latest-link:hover {
+				color: var(--accent-dark);
+				transform: translateY(-2px);
 			}
 
 			.carousel {
@@ -268,6 +361,12 @@ const previews = await Promise.all(
 				cursor: pointer;
 				box-shadow: var(--box-shadow);
 				z-index: 2;
+			}
+
+			.carousel .nav:disabled {
+				opacity: 0.38;
+				cursor: not-allowed;
+				box-shadow: none;
 			}
 
 			.carousel .nav.prev {
@@ -351,21 +450,61 @@ const previews = await Promise.all(
 
 			@media (max-width: 720px) {
 				.home-page {
-					padding-top: 1.5rem;
+					padding-top: 1rem;
 				}
 
 				.hero {
 					grid-template-columns: 1fr;
-					padding: 1.2rem;
-					gap: 1.3rem;
+					padding: 1rem;
+					gap: 1rem;
+				}
+
+				.hero-actions {
+					display: grid;
+					grid-template-columns: 1fr 1fr;
+					gap: 0.65rem;
+					margin-top: 1.1rem;
+				}
+
+				.hero-copy {
+					display: none;
+				}
+
+				.hero-actions .button {
+					width: auto;
+					min-height: 3rem;
+					padding: 0.7rem 0.85rem;
+					font-size: 0.95rem;
+				}
+
+				.hero-actions .button:first-child {
+					grid-column: 1 / -1;
 				}
 
 				.hero-stats {
-					grid-template-columns: 1fr;
+					display: none;
+				}
+
+				.hero-image {
+					aspect-ratio: 2 / 1;
 				}
 
 				.hero-panel {
-					padding: 1rem;
+					display: none;
+				}
+
+				.prologue {
+					grid-template-columns: 1fr;
+					gap: 0.8rem;
+					padding-top: 1.6rem;
+				}
+
+				.prologue-date {
+					position: static;
+				}
+
+				.home-section {
+					display: grid;
 				}
 
 				.carousel .nav {
@@ -386,18 +525,48 @@ const previews = await Promise.all(
 				const track = carousel.querySelector('.carousel-track');
 				if (!track) return;
 
-				carousel.querySelectorAll('[data-direction]').forEach((button) => {
+				const buttons = Array.from(carousel.querySelectorAll('[data-direction]'));
+				const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+				let scheduled = false;
+
+				const updateButtons = () => {
+					scheduled = false;
+					const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
+					const atStart = track.scrollLeft <= 2;
+					const atEnd = track.scrollLeft >= maxScroll - 2;
+
+					buttons.forEach((button) => {
+						const direction = Number(button.getAttribute('data-direction')) || 1;
+						const disabled = direction < 0 ? atStart : atEnd;
+						button.disabled = disabled;
+						button.setAttribute('aria-disabled', String(disabled));
+					});
+				};
+
+				const requestUpdate = () => {
+					if (scheduled) return;
+					scheduled = true;
+					window.requestAnimationFrame(updateButtons);
+				};
+
+				buttons.forEach((button) => {
 					button.addEventListener('click', () => {
 						const direction = Number(button.getAttribute('data-direction')) || 1;
 						const amount = Math.max(track.clientWidth * 0.82, 280) * direction;
 
 						try {
-							track.scrollBy({ left: amount, behavior: 'smooth' });
+							track.scrollBy({ left: amount, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
 						} catch {
 							track.scrollLeft += amount;
 						}
+
+						requestUpdate();
 					});
 				});
+
+				track.addEventListener('scroll', requestUpdate, { passive: true });
+				window.addEventListener('resize', requestUpdate, { passive: true });
+				updateButtons();
 			});
 		</script>
 		<Footer />

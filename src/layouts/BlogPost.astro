@@ -6,22 +6,68 @@ import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Heading = {
+	depth: number;
+	slug: string;
+	text: string;
+};
 
-const { title, description, heroImage, heroImages, postId } = Astro.props;
+type Props = CollectionEntry<'blog'>['data'] & {
+	headings?: Heading[];
+	postId?: string;
+	readingMinutes?: number;
+};
+
+const { title, description, heroImage, heroImages, headings = [], postId, readingMinutes } = Astro.props;
 const heroList = (Array.isArray(heroImages) ? heroImages : heroImage ? [heroImage] : []).filter(Boolean);
 const allPosts = (await getCollection('blog'))
-  .filter(({ id }) => /^\d+-avventura$/.test(id))
-  .sort((a, b) => parseInt(a.id) - parseInt(b.id));
+	.filter(({ id }) => /^\d+-avventura$/.test(id))
+	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 const currentIndex = allPosts.findIndex((p) => p.id === postId);
 const prev = currentIndex > 0 ? allPosts[currentIndex - 1] : null;
 const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[currentIndex + 1] : null;
+const isBlogPost = currentIndex >= 0;
+const primaryHeading = headings.find((heading) => heading.depth === 1);
+const firstSectionHeading = headings.find((heading) => heading.depth === 2);
+const promotedHeading = primaryHeading ?? firstSectionHeading;
+const narrativeTitle = promotedHeading?.text ?? title;
+const sectionHeadings = headings.filter(
+	(heading) => heading.slug !== promotedHeading?.slug && (heading.depth === 2 || heading.depth === 3)
+);
+const visibleSectionHeadings = sectionHeadings.slice(0, 14);
+const contentClass = [
+	'article-content',
+	promotedHeading?.depth === 1 ? 'hide-first-h1' : '',
+	promotedHeading?.depth === 2 ? 'hide-first-h2' : '',
+]
+	.filter(Boolean)
+	.join(' ');
+const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
 <html lang="it">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={narrativeTitle} description={description} type={isBlogPost ? 'article' : 'website'} />
 		<style>
+			.reading-progress {
+				position: fixed;
+				top: 0;
+				left: 0;
+				z-index: 40;
+				width: 100%;
+				height: 4px;
+				background: transparent;
+				pointer-events: none;
+			}
+
+			.reading-progress__bar {
+				display: block;
+				width: 0%;
+				height: 100%;
+				background: linear-gradient(90deg, var(--accent-dark), var(--accent));
+				box-shadow: 0 0 18px rgba(var(--storm-sea-rgb), 0.35);
+			}
+
 			.article-page {
 				padding: 2.2rem 0 4rem;
 			}
@@ -43,7 +89,8 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 			.hero-image img {
 				display: block;
 				width: 100%;
-				height: 100%;
+				height: auto;
+				aspect-ratio: 2 / 1;
 				margin: 0 auto;
 				object-fit: cover;
 				border-radius: calc(var(--radius) - 6px);
@@ -59,18 +106,271 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 				grid-template-columns: 1fr 1fr;
 			}
 
+			.hero-grid.two img {
+				aspect-ratio: 4 / 3;
+			}
+
 			.prose {
 				color: rgb(var(--gray-dark));
 			}
 
-			.title {
+			.article-header {
 				padding: 0.5rem 0 0;
-				margin-bottom: 2rem;
+				margin-bottom: 1.7rem;
 				text-align: center;
 			}
 
-			.title h1 {
+			.article-header h1 {
 				margin-bottom: 0.75rem;
+			}
+
+			.article-kicker,
+			.article-meta {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.6rem 0.9rem;
+				margin: 0;
+			}
+
+			.article-kicker {
+				margin-bottom: 0.8rem;
+			}
+
+			.article-meta {
+				color: rgb(var(--gray));
+				font-size: 0.94rem;
+				font-weight: 700;
+			}
+
+			.article-meta span + span::before {
+				content: "·";
+				margin-right: 0.9rem;
+				color: rgba(var(--storm-sea-rgb), 0.72);
+			}
+
+			.reader-nav {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+				gap: 0.75rem;
+				margin: 1.4rem 0 2rem;
+				padding: 0.85rem;
+				border: 1px solid rgba(var(--border), 0.42);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.72);
+			}
+
+			.reader-nav a {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				min-height: 3.2rem;
+				padding: 0.7rem 0.9rem;
+				border-radius: calc(var(--radius-sm) - 6px);
+				color: rgb(var(--black));
+				text-align: center;
+				text-decoration: none;
+				font-weight: 700;
+			}
+
+			.reader-nav a:hover {
+				background: rgba(var(--storm-mist-rgb), 0.14);
+				color: var(--accent-dark);
+			}
+
+			.reader-nav .index {
+				border-inline: 1px solid rgba(var(--border), 0.42);
+				border-radius: 0;
+			}
+
+			.reader-nav .nav-label {
+				display: none;
+			}
+
+			.article-toc {
+				margin: 0 0 2.2rem;
+				padding: 1rem 1.1rem;
+				border: 1px solid rgba(var(--border), 0.42);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-ivory-rgb), 0.7);
+			}
+
+			.article-toc summary {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				gap: 1rem;
+				color: rgb(var(--black));
+				cursor: pointer;
+				font-weight: 700;
+				list-style: none;
+			}
+
+			.article-toc summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.article-toc summary::after {
+				content: "+";
+				display: inline-grid;
+				place-items: center;
+				width: 1.65rem;
+				height: 1.65rem;
+				border-radius: 50%;
+				background: rgba(var(--storm-mist-rgb), 0.18);
+				color: var(--accent-dark);
+			}
+
+			.article-toc[open] summary::after {
+				content: "-";
+			}
+
+			.article-toc ol {
+				list-style: none;
+				margin: 0.9rem 0 0;
+				padding: 0;
+				display: grid;
+				gap: 0.5rem;
+			}
+
+			.article-toc li.depth-3 {
+				padding-left: 1rem;
+				font-size: 0.95rem;
+			}
+
+			.article-toc a {
+				color: rgb(var(--gray-dark));
+				text-decoration: none;
+			}
+
+			.article-toc a:hover {
+				color: var(--accent-dark);
+			}
+
+			.article-content.hide-first-h1 > :global(h1:first-of-type),
+			.article-content.hide-first-h2 > :global(h2:first-of-type) {
+				display: none;
+			}
+
+			.article-content :global(h2[id]),
+			.article-content :global(h3[id]) {
+				position: relative;
+			}
+
+			.article-content :global(.section-copy-link) {
+				display: inline-grid;
+				place-items: center;
+				width: 1.8rem;
+				height: 1.8rem;
+				margin-left: 0.45rem;
+				border: 1px solid rgba(var(--border), 0.42);
+				border-radius: 999px;
+				background: rgba(var(--storm-ivory-rgb), 0.78);
+				color: var(--accent-dark);
+				cursor: pointer;
+				font: inherit;
+				font-family: "Atkinson", sans-serif;
+				font-size: 0.82rem;
+				font-weight: 700;
+				line-height: 1;
+				opacity: 0;
+				transform: translateY(-0.05rem);
+				transition:
+					opacity 0.16s ease,
+					background-color 0.16s ease,
+					transform 0.16s ease;
+				vertical-align: middle;
+			}
+
+			.article-content :global(h2[id]:hover .section-copy-link),
+			.article-content :global(h2[id]:focus-within .section-copy-link),
+			.article-content :global(h3[id]:hover .section-copy-link),
+			.article-content :global(h3[id]:focus-within .section-copy-link) {
+				opacity: 1;
+			}
+
+			.article-content :global(.section-copy-link:hover),
+			.article-content :global(.section-copy-link[data-copied="true"]) {
+				background: rgba(var(--storm-mist-rgb), 0.18);
+				transform: translateY(-0.12rem);
+			}
+
+			.article-content :global(.section-copy-link::before) {
+				content: "#";
+			}
+
+			.article-content :global(img) {
+				cursor: zoom-in;
+			}
+
+			.article-content :global(img[role="button"]) {
+				transition:
+					transform 0.2s ease,
+					box-shadow 0.2s ease;
+			}
+
+			.article-content :global(img[role="button"]:hover) {
+				transform: translateY(-2px);
+			}
+
+			.article-content :global(img[role="button"]:focus-visible) {
+				outline: 3px solid rgba(var(--storm-mist-rgb), 0.35);
+				outline-offset: 4px;
+			}
+
+			.image-viewer {
+				width: min(100% - 2rem, 1120px);
+				max-height: min(92vh, 900px);
+				padding: 0;
+				border: 1px solid rgba(var(--storm-ivory-rgb), 0.28);
+				border-radius: var(--radius-sm);
+				background: rgba(var(--storm-night-rgb), 0.96);
+				color: rgb(var(--storm-ivory-rgb));
+				box-shadow: 0 28px 80px rgba(var(--storm-night-rgb), 0.42);
+			}
+
+			.image-viewer::backdrop {
+				background: rgba(var(--storm-night-rgb), 0.78);
+				backdrop-filter: blur(8px);
+			}
+
+			.image-viewer__inner {
+				display: grid;
+				gap: 0;
+			}
+
+			.image-viewer__close {
+				justify-self: end;
+				margin: 0.75rem 0.75rem 0;
+				padding: 0.6rem 0.85rem;
+				border: 1px solid rgba(var(--storm-ivory-rgb), 0.24);
+				border-radius: 999px;
+				background: rgba(var(--storm-ivory-rgb), 0.1);
+				color: rgb(var(--storm-ivory-rgb));
+				cursor: pointer;
+				font-weight: 700;
+			}
+
+			.image-viewer__image {
+				display: block;
+				width: 100%;
+				max-height: calc(92vh - 7rem);
+				object-fit: contain;
+				margin: 0;
+				padding: 0.75rem;
+				border-radius: 0;
+			}
+
+			.image-viewer__caption {
+				margin: 0;
+				padding: 0 1.2rem 1.1rem;
+				color: rgba(var(--storm-ivory-rgb), 0.82);
+				text-align: center;
+				font-size: 0.95rem;
+			}
+
+			.image-viewer__caption:empty {
+				display: none;
 			}
 
 			.post-nav {
@@ -118,7 +418,45 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 				}
 
 				.hero-grid.two {
-					grid-template-columns: 1fr;
+					grid-template-columns: 1fr 1fr;
+				}
+
+				.hero-grid.two img {
+					aspect-ratio: 1 / 1;
+				}
+
+				.reader-nav {
+					grid-template-columns: repeat(2, minmax(0, 1fr));
+					gap: 0.55rem;
+					margin-bottom: 1.2rem;
+					padding: 0.65rem;
+				}
+
+				.reader-nav a {
+					min-width: 0;
+					min-height: 2.9rem;
+					padding: 0.65rem 0.7rem;
+					font-size: 0.95rem;
+				}
+
+				.reader-nav .nav-label {
+					display: inline;
+				}
+
+				.reader-nav .nav-title {
+					display: none;
+				}
+
+				.reader-nav .index {
+					grid-column: 1 / -1;
+					order: -1;
+					border: 0;
+					border-bottom: 1px solid rgba(var(--border), 0.42);
+					border-radius: 0;
+				}
+
+				.article-toc {
+					margin-bottom: 1.5rem;
 				}
 
 				.post-nav {
@@ -129,8 +467,13 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 	</head>
 
 	<body>
+		{isBlogPost && (
+			<div class="reading-progress" aria-hidden="true">
+				<span class="reading-progress__bar" data-reading-progress></span>
+			</div>
+		)}
 		<Header />
-		<main class="container article-page">
+		<main id="content" tabindex="-1" class="container article-page">
 			<article class="article-shell">
 				{heroList.length > 0 && (
 					<div class="hero-image">
@@ -142,19 +485,204 @@ const next = currentIndex >= 0 && currentIndex < allPosts.length - 1 ? allPosts[
 					</div>
 				)}
 				<div class="prose">
-					<div class="title">
-						<p class="eyebrow">Capitolo di campagna</p>
-						<h1>{title}</h1>
+					<header class="article-header">
+						<p class="article-kicker"><span class="eyebrow">Capitolo di campagna</span></p>
+						<h1>{narrativeTitle}</h1>
+						{isBlogPost && (
+							<p class="article-meta">
+								<span>{title}</span>
+								{readingMinutes && <span>{readingMinutes} min di lettura</span>}
+								<span>{sectionHeadings.length} scene</span>
+							</p>
+						)}
+					</header>
+					{isBlogPost && (
+						<nav class="reader-nav" aria-label="Navigazione capitolo">
+							{prev ? (
+								<a class="prev" href={`${base}blog/${prev.id}/`} aria-label={`Capitolo precedente: ${prev.data.title}`}>
+									<span class="nav-label">← Precedente</span>
+									<span class="nav-title">← {prev.data.title}</span>
+								</a>
+							) : <span aria-hidden="true"></span>}
+							<a class="index" href={`${base}blog/`}>Indice</a>
+							{next ? (
+								<a class="next" href={`${base}blog/${next.id}/`} aria-label={`Capitolo successivo: ${next.data.title}`}>
+									<span class="nav-label">Successiva →</span>
+									<span class="nav-title">{next.data.title} →</span>
+								</a>
+							) : <span aria-hidden="true"></span>}
+						</nav>
+					)}
+					{visibleSectionHeadings.length > 1 && (
+						<details class="article-toc" open>
+							<summary>In questo capitolo</summary>
+							<ol>
+								{visibleSectionHeadings.map((heading) => (
+									<li class={`depth-${heading.depth}`}>
+										<a href={`#${heading.slug}`}>{heading.text}</a>
+									</li>
+								))}
+							</ol>
+						</details>
+					)}
+					<div class={contentClass}>
+						<slot />
 					</div>
-					<slot />
-					<nav class="post-nav">
-						{prev ? <a class="prev" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/${prev.id}/`}>← {prev.data.title}</a> : <span>Avventura precedente</span>}
-						<a class="index" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/`}>Indice</a>
-						{next ? <a class="next" href={`${import.meta.env.BASE_URL.replace(/\/?$/, '/') }blog/${next.id}/`}>{next.data.title} →</a> : <span>Avventura successiva</span>}
-					</nav>
+					{isBlogPost && (
+						<nav class="post-nav" aria-label="Navigazione tra avventure">
+							{prev ? <a class="prev" href={`${base}blog/${prev.id}/`}>← {prev.data.title}</a> : <span>Avventura precedente</span>}
+							<a class="index" href={`${base}blog/`}>Indice</a>
+							{next ? <a class="next" href={`${base}blog/${next.id}/`}>{next.data.title} →</a> : <span>Avventura successiva</span>}
+						</nav>
+					)}
 				</div>
 			</article>
 		</main>
 		<Footer />
+		{isBlogPost && (
+			<dialog class="image-viewer" data-image-viewer aria-label="Immagine ingrandita">
+				<div class="image-viewer__inner">
+					<button class="image-viewer__close" type="button" data-image-viewer-close>Chiudi</button>
+					<img class="image-viewer__image" src="" alt="" data-image-viewer-image />
+					<p class="image-viewer__caption" data-image-viewer-caption></p>
+				</div>
+			</dialog>
+		)}
+		{isBlogPost && (
+			<script is:inline>
+				const progress = document.querySelector('[data-reading-progress]');
+				const toc = document.querySelector('.article-toc');
+				const viewer = document.querySelector('[data-image-viewer]');
+				const viewerImage = document.querySelector('[data-image-viewer-image]');
+				const viewerCaption = document.querySelector('[data-image-viewer-caption]');
+				const viewerClose = document.querySelector('[data-image-viewer-close]');
+				const scrollToHash = () => {
+					const id = decodeURIComponent(window.location.hash.slice(1));
+					if (!id) return;
+
+					const target = document.getElementById(id);
+					if (target) {
+						target.scrollIntoView({ block: 'start' });
+					}
+				};
+
+				if (toc instanceof HTMLDetailsElement && window.matchMedia('(max-width: 720px)').matches) {
+					toc.open = false;
+				}
+
+				document.querySelectorAll('.article-content h2[id], .article-content h3[id]').forEach((heading) => {
+					if (!(heading instanceof HTMLElement) || heading.querySelector('.section-copy-link')) return;
+					if (window.getComputedStyle(heading).display === 'none') return;
+
+					const headingText = heading.textContent?.trim() || 'sezione';
+					const button = document.createElement('button');
+					button.type = 'button';
+					button.className = 'section-copy-link';
+					button.setAttribute('aria-label', `Copia link alla sezione: ${headingText}`);
+
+					button.addEventListener('click', async () => {
+						const url = new URL(window.location.href);
+						url.hash = heading.id;
+						window.history.replaceState(null, '', url);
+
+						try {
+							await navigator.clipboard?.writeText(url.href);
+						} catch {
+							// Updating the URL still gives the reader a copyable deep link.
+						}
+
+						button.dataset.copied = 'true';
+						button.setAttribute('aria-label', `Link copiato: ${headingText}`);
+						window.setTimeout(() => {
+							button.dataset.copied = 'false';
+							button.setAttribute('aria-label', `Copia link alla sezione: ${headingText}`);
+						}, 1400);
+					});
+
+					heading.append(button);
+				});
+
+				if (window.location.hash) {
+					window.requestAnimationFrame(() => {
+						scrollToHash();
+						window.setTimeout(scrollToHash, 250);
+					});
+				}
+
+				window.addEventListener('hashchange', scrollToHash);
+
+				if (progress instanceof HTMLElement) {
+					const updateProgress = () => {
+						const scrollTop = window.scrollY || document.documentElement.scrollTop;
+						const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+						const value = maxScroll > 0 ? Math.min(100, Math.max(0, (scrollTop / maxScroll) * 100)) : 0;
+						progress.style.width = `${value}%`;
+					};
+
+					updateProgress();
+					window.addEventListener('scroll', updateProgress, { passive: true });
+					window.addEventListener('resize', updateProgress, { passive: true });
+				}
+
+				if (
+					viewer instanceof HTMLDialogElement
+					&& viewerImage instanceof HTMLImageElement
+					&& viewerCaption instanceof HTMLElement
+					&& viewerClose instanceof HTMLButtonElement
+				) {
+					let lastOpenedImage = null;
+
+					const openImage = (image) => {
+						const source = image.currentSrc || image.src;
+						const caption = image.alt || '';
+
+						if (!source) return;
+
+						lastOpenedImage = image;
+						viewerImage.src = source;
+						viewerImage.alt = caption;
+						viewerCaption.textContent = caption;
+
+						if (typeof viewer.showModal === 'function') {
+							viewer.showModal();
+						} else {
+							viewer.setAttribute('open', '');
+						}
+
+						viewerClose.focus();
+					};
+
+					document.querySelectorAll('.article-content img').forEach((image) => {
+						if (!(image instanceof HTMLImageElement)) return;
+
+						const label = image.alt ? `Ingrandisci immagine: ${image.alt}` : 'Ingrandisci immagine';
+						image.setAttribute('role', 'button');
+						image.setAttribute('tabindex', '0');
+						image.setAttribute('aria-label', label);
+
+						image.addEventListener('click', () => openImage(image));
+						image.addEventListener('keydown', (event) => {
+							if (event.key !== 'Enter' && event.key !== ' ') return;
+							event.preventDefault();
+							openImage(image);
+						});
+					});
+
+					viewerClose.addEventListener('click', () => viewer.close());
+					viewer.addEventListener('click', (event) => {
+						if (event.target === viewer) {
+							viewer.close();
+						}
+					});
+					viewer.addEventListener('close', () => {
+						viewerImage.removeAttribute('src');
+						if (lastOpenedImage instanceof HTMLImageElement) {
+							lastOpenedImage.focus({ preventScroll: true });
+						}
+						lastOpenedImage = null;
+					});
+				}
+			</script>
+		)}
 	</body>
 </html>

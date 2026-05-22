@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "postbuild": "node scripts/prune-dist-images.mjs",
     "preview": "astro preview",
     "astro": "astro",
-    "convert:docx": "node scripts/docx-to-posts.mjs"
+    "convert:docx": "node scripts/docx-to-posts.mjs",
+    "optimize:images": "node scripts/optimize-public-images.mjs",
+    "audit:images": "node scripts/audit-public-images.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.7",

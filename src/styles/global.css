@@ -43,6 +43,12 @@
 	font-display: swap;
 }
 
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
 html {
 	scroll-behavior: smooth;
 	-webkit-text-size-adjust: 100%;
@@ -51,6 +57,21 @@ html {
 		radial-gradient(circle at top right, rgba(var(--storm-sea-rgb), 0.2), transparent 28%),
 		radial-gradient(circle at 50% -10%, rgba(var(--storm-ivory-rgb), 0.75), transparent 20%),
 		linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 1), rgba(var(--storm-mist-rgb), 0.38));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+	}
 }
 
 body {
@@ -115,7 +136,7 @@ h6 {
 	color: rgb(var(--black));
 	line-height: 1.08;
 	font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Cormorant Garamond", serif;
-	letter-spacing: -0.02em;
+	letter-spacing: 0;
 }
 
 h1 {
@@ -313,7 +334,7 @@ button {
 .prose h1,
 .prose h2,
 .prose h3 {
-	scroll-margin-top: 0.35rem;
+	scroll-margin-top: calc(var(--header-height) + 1.25rem);
 }
 
 .prose h1 {
@@ -418,5 +439,92 @@ code,
 
 	.button {
 		width: 100%;
+	}
+}
+
+@media print {
+	@page {
+		margin: 18mm;
+	}
+
+	:root {
+		--box-shadow: none;
+		--header-height: 0px;
+	}
+
+	html,
+	body {
+		background: #fff !important;
+		color: #111 !important;
+		font-size: 11pt;
+		line-height: 1.55;
+	}
+
+	body::before,
+	.site-header,
+	.site-footer,
+	.reading-progress,
+	.reader-nav,
+	.article-toc,
+	.post-nav,
+	.section-copy-link,
+	.image-viewer {
+		display: none !important;
+	}
+
+	.container,
+	.prose {
+		width: 100% !important;
+		max-width: none !important;
+		margin: 0 !important;
+	}
+
+	.article-page,
+	.article-shell {
+		padding: 0 !important;
+	}
+
+	.article-shell {
+		border: 0 !important;
+		border-radius: 0 !important;
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+
+	.article-header {
+		text-align: left !important;
+	}
+
+	.hero-image,
+	.prose img,
+	.prose figure,
+	blockquote {
+		break-inside: avoid;
+	}
+
+	.prose img,
+	.hero-image img {
+		max-height: 120mm;
+		object-fit: contain;
+		box-shadow: none !important;
+	}
+
+	h1,
+	h2,
+	h3 {
+		break-after: avoid;
+		color: #111 !important;
+	}
+
+	p,
+	li,
+	blockquote {
+		orphans: 3;
+		widows: 3;
+	}
+
+	a {
+		color: inherit !important;
+		text-decoration: none !important;
 	}
 }

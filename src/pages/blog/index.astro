@@ -15,8 +15,13 @@ const posts = await Promise.all(
 	rawPosts.map(async (entry) => {
 		const { headings } = await render(entry);
 		const sections = headings
-			.filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== entry.data.title.trim())
-			.map(({ depth, slug, text }) => ({ depth, slug, text }));
+			.filter((h) => (h.depth === 1 || h.depth === 2 || h.depth === 3) && h.text.trim() !== entry.data.title.trim())
+			.map(({ depth, slug, text }) => ({
+				depth,
+				slug,
+				text,
+				isChapter: /^(?:\d+°\s*)?Capitolo\s+\d+\b|^\d+°\s*Capitolo\b/i.test(text),
+			}));
 		return { entry, sections };
 	})
 );
@@ -234,6 +239,23 @@ const latestPost = rawPosts.at(-1);
 				margin-top: 0.75rem;
 			}
 
+			.sections li.chapter-title {
+				padding-top: 0.35rem;
+				border-top: 1px solid rgba(var(--border), 0.36);
+			}
+
+			.sections li.chapter-title:first-child {
+				padding-top: 0;
+				border-top: 0;
+			}
+
+			.sections li.chapter-title a {
+				color: var(--accent-dark);
+				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+				font-size: 1.08rem;
+				font-weight: 700;
+			}
+
 			.sections li.depth-3 {
 				padding-left: 0.85rem;
 				opacity: 0.92;
@@ -346,8 +368,8 @@ const latestPost = rawPosts.at(-1);
 								<details class="sections-details">
 									<summary>Scene principali</summary>
 									<ul class="sections">
-										{sections.map(({ depth, slug, text }) => (
-											<li class={`depth-${depth}`}>
+										{sections.map(({ depth, slug, text, isChapter }) => (
+											<li class={`depth-${depth}${isChapter ? ' chapter-title' : ''}`}>
 												<a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
 											</li>
 										))}

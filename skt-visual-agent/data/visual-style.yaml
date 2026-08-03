@@ -1,0 +1,33 @@
+schema_version: 1
+id: "skt-european-graphic-novel-v1"
+name: "Storm King's Thunder — European Graphic Novel"
+setting: "Forgotten Realms"
+base_style: >-
+  Realistic fantasy graphic novel style, mature European comic book aesthetic,
+  clean inked linework, painterly digital rendering, desaturated cold natural
+  colors, strong black shadows, realistic anatomy, weathered textures, and
+  cinematic environmental storytelling.
+default_aspect_ratio: "16:9"
+composition:
+  - "Make the central action immediately readable."
+  - "Prefer cinematic scene storytelling over a posed character lineup."
+  - "Use clear foreground, middle ground, and background separation."
+  - "Show the environment when it supports narrative understanding."
+character_continuity:
+  - "Use every available reference image for a visible named character."
+  - "Preserve facial identity, species, build, distinctive features, and established equipment."
+  - "Apply transformations, injuries, disguises, and equipment changes only when the current scene states them."
+creature_rules:
+  - "Use verified canonical anatomy when available."
+  - "Keep different creature species visually distinct."
+  - "Do not replace an identified creature with a generic humanoid or animal."
+negative_constraints:
+  - "no anime or cartoon proportions"
+  - "no glossy videogame rendering"
+  - "no plastic skin"
+  - "no exaggerated superhero anatomy"
+  - "no oversaturated colors"
+  - "no modern objects"
+  - "no written text unless explicitly requested"
+  - "no duplicate characters"
+  - "no incorrect weapons or species"

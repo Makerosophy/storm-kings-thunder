@@ -1,0 +1,474 @@
+schema_version: 2
+campaign: "Storm King's Thunder"
+last_api_review: "2026-08-03"
+
+providers:
+  dnd5eapi-2014:
+    name: "D&D 5e SRD API"
+    base_url: "https://www.dnd5eapi.co/api/2014/monsters"
+    image_base_url: "https://www.dnd5eapi.co"
+    scope: "2014 SRD creatures only"
+
+resolution_policy:
+  order:
+    - "current scene and explicit user corrections"
+    - "campaign registry and published campaign images"
+    - "D&D 5e SRD API"
+    - "conservative visual inference"
+  rules:
+    - "Record a source for every canonical visual claim."
+    - "Use API size, type, movement, attacks, equipment, and explicit traits as structured facts."
+    - "Use the API image as a visual reference when anatomy is not described by structured fields."
+    - "Do not infer anatomy from armor class, hit points, ability scores, or challenge rating."
+    - "Do not treat a campaign-specific variant as the standard SRD creature."
+    - "Label unsupported visual details as inference."
+
+api_misses:
+  - query: "yakfolk"
+    result: "not-found"
+    fallback: "campaign blog and published campaign images"
+  - query: "yeti"
+    result: "not-found"
+    fallback: "campaign blog and published campaign images"
+
+creatures:
+  - id: "yakfolk"
+    name: "Yakfolk"
+    aliases:
+      - "yak folk"
+      - "yak-folk"
+    resolution_status: "campaign-verified-non-srd"
+    taxonomy:
+      size: "large humanoid stature; exact rules size not established here"
+      type: "anthropomorphic yak people"
+    visual_profile:
+      required_traits:
+        - "upright humanoid body with a clearly bovine yak head"
+        - "broad curved horns"
+        - "long shaggy fur, especially around head, neck, shoulders, and lower body"
+        - "large muscular build and heavy hands"
+        - "mountain clothing, hides, leather, and weathered metal armor"
+      common_equipment:
+        - "heavy axes, polearms, or swords for warriors"
+        - "robes, talismans, and spell effects for priestesses or evokers"
+      palette:
+        - "black, dark brown, gray, and dirty white fur"
+        - "weathered brown leather and dark iron"
+      environment:
+        - "fortified high-mountain village"
+        - "timber palisades, round huts, stone terraces, waterfalls, and grain fields"
+    campaign_variants:
+      - id: "yakfolk-warrior"
+        traits:
+          - "heavily built melee combatant"
+      - id: "yakfolk-evoker"
+        aliases:
+          - "yakfolk priestess"
+        traits:
+          - "female spellcaster capable of summoning and healing in session 18"
+      - id: "kartha-kaya"
+        traits:
+          - "named yakfolk leader"
+          - "uses a flaming sword in session 18"
+    established_capabilities:
+      - "Some yakfolk use magic, including elemental summoning and healing."
+      - "The campaign establishes a dark possession ritual that lets them enter and control other bodies."
+    continuity_rules:
+      - "Do not draw yakfolk as ordinary humans wearing horned helmets."
+      - "Do not draw them as four-legged yaks or minotaurs with short cattle fur."
+      - "Preserve the shaggy high-altitude yak silhouette shown in campaign images."
+      - "Only show possession, spellcasting, or flaming weapons when the scene identifies the relevant variant."
+    sources:
+      - type: "blog"
+        value: "src/content/blog/17-avventura.mdx:375"
+        supports:
+          - "anthropomorphic yak appearance"
+          - "large stature"
+          - "mountain village"
+      - type: "blog"
+        value: "src/content/blog/18-avventura.mdx:117-173"
+        supports:
+          - "evokers"
+          - "earth elemental summoning"
+          - "healing"
+          - "Kartha-Kaya's flaming sword"
+      - type: "blog"
+        value: "src/content/blog/18-avventura.mdx:289"
+        supports:
+          - "possession ritual"
+      - type: "campaign-image"
+        value: "public/images/sessions/017/09_Yakfolk_v2_resized.jpg"
+      - type: "campaign-image"
+        value: "public/images/sessions/018/02_Scontro con Yakfolk_resized.jpg"
+
+  - id: "worg"
+    name: "Worg"
+    aliases: []
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Large"
+      type: "monstrosity"
+    visual_profile:
+      required_traits:
+        - "massive predatory wolf-like quadruped"
+        - "heavy muzzle, prominent canines, thick fur, powerful torso and paws"
+      behavior:
+        - "cunning pack hunter"
+        - "can serve as a goblinoid mount"
+    established_capabilities:
+      - "keen hearing and smell"
+      - "knockdown bite"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/worg"
+      image: "https://www.dnd5eapi.co/api/images/monsters/worg.png"
+    continuity_rules:
+      - "Keep a normal worg Large and quadrupedal; do not add supernatural teleportation or poison unless it is the campaign dire-worg variant."
+
+  - id: "dire-worg-campaign-variant"
+    name: "Dire Worg"
+    aliases:
+      - "worg capobranco"
+      - "enorme worg"
+    resolution_status: "campaign-variant"
+    based_on: "worg"
+    visual_profile:
+      required_traits:
+        - "same fundamental anatomy as a worg"
+        - "approximately twice the bulk of the accompanying worgs"
+        - "intelligent predatory gaze"
+    established_capabilities:
+      - "poisonous bites in the campaign encounter"
+      - "psychic howl"
+      - "short-range teleportation that can carry another worg"
+    continuity_rules:
+      - "Do not apply these supernatural traits to ordinary worgs."
+    sources:
+      - type: "blog"
+        value: "src/content/blog/16-avventura.mdx:61-115"
+      - type: "campaign-image"
+        value: "public/images/sessions/016/04_Dew_vs_Dire_Worg_resized.jpg"
+
+  - id: "azer"
+    name: "Azer"
+    aliases: []
+    resolution_status: "srd-and-campaign-verified"
+    taxonomy:
+      size: "Medium"
+      type: "elemental"
+    visual_profile:
+      required_traits:
+        - "compact, powerfully built humanoid elemental"
+        - "living flames rising from the head"
+        - "body and metal equipment radiate heat and light"
+      common_equipment:
+        - "metal warhammer"
+        - "shield when appropriate"
+    established_capabilities:
+      - "heated body"
+      - "heated metal weapons"
+      - "emits bright and dim light"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/azer"
+      image: "https://www.dnd5eapi.co/api/images/monsters/azer.png"
+    sources:
+      - type: "blog"
+        value: "src/content/blog/17-avventura.mdx:29"
+        supports:
+          - "flaming heads"
+
+  - id: "earth-elemental"
+    name: "Earth Elemental"
+    aliases:
+      - "elementale della terra"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Large"
+      type: "elemental"
+    visual_profile:
+      required_traits:
+        - "hulking humanoid mass formed from unworked stone, earth, and compacted mineral plates"
+        - "massive arms and fists suited to crushing slam attacks"
+        - "no clothing, forged armor, or carried weapon unless the scene explicitly adds them"
+    established_capabilities:
+      - "moves through natural earth and stone"
+      - "powerful slam attacks"
+      - "damages structures easily"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/earth-elemental"
+      image: "https://www.dnd5eapi.co/api/images/monsters/earth-elemental.png"
+    sources:
+      - type: "blog"
+        value: "src/content/blog/18-avventura.mdx:117"
+        supports:
+          - "summoned by a yakfolk evoker"
+
+  - id: "chimera"
+    name: "Chimera"
+    aliases: []
+    resolution_status: "srd-and-campaign-verified"
+    taxonomy:
+      size: "Large"
+      type: "monstrosity"
+    visual_profile:
+      required_traits:
+        - "single large quadrupedal body with claws and functional wings"
+        - "central lion head with a heavy mane"
+        - "goat head with horns"
+        - "scaled dragon head capable of breathing fire"
+      spatial_rules:
+        - "all three heads emerge distinctly from the shoulder and neck region"
+        - "do not merge the faces into one head"
+    established_capabilities:
+      - "bite, horns, and claws"
+      - "flight"
+      - "fire breath from the dragon head"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/chimera"
+      image: "https://www.dnd5eapi.co/api/images/monsters/chimera.png"
+    sources:
+      - type: "blog"
+        value: "src/content/blog/17-avventura.mdx:407"
+        supports:
+          - "dragon, goat, and lion heads"
+      - type: "campaign-image"
+        value: "public/images/sessions/017/11_Chimera_resized.jpg"
+
+  - id: "roc"
+    name: "Roc"
+    aliases: []
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Gargantuan"
+      type: "monstrosity"
+    visual_profile:
+      required_traits:
+        - "gargantuan naturalistic bird of prey"
+        - "enormous wingspan"
+        - "massive hooked beak and talons capable of carrying large creatures"
+      prohibited_traits:
+        - "no draconic head, extra limbs, or magical plumage unless the scene specifies a variant"
+    established_capabilities:
+      - "keen sight"
+      - "grappling talons"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/roc"
+      image: "https://www.dnd5eapi.co/api/images/monsters/roc.png"
+
+  - id: "remorhaz"
+    name: "Remorhaz"
+    aliases:
+      - "young remorhaz"
+    resolution_status: "srd-base-with-campaign-age-variant"
+    taxonomy:
+      size: "Huge for the SRD adult"
+      type: "monstrosity"
+    visual_profile:
+      required_traits:
+        - "long segmented burrowing body"
+        - "many lateral legs"
+        - "armored chitinous plates"
+        - "large biting maw"
+        - "visible heat or steam around the body in cold environments"
+    established_capabilities:
+      - "burrowing"
+      - "heated body"
+      - "bite and swallow"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/remorhaz"
+      image: "https://www.dnd5eapi.co/api/images/monsters/remorhaz.png"
+    continuity_rules:
+      - "Scale down a young remorhaz relative to the Huge SRD adult without changing its core anatomy."
+
+  - id: "yeti-campaign-reference"
+    name: "Yeti"
+    aliases:
+      - "yeti"
+    resolution_status: "campaign-verified-api-miss"
+    taxonomy:
+      size: "large humanoid stature; exact rules size not recorded"
+      type: "cold-climate humanoid monster"
+    visual_profile:
+      required_traits:
+        - "hulking ape-like biped"
+        - "long shaggy white or off-white fur"
+        - "blue-gray face and hands"
+        - "long clawed arms and wide fanged mouth"
+      environment:
+        - "snowstorms, glaciers, and alpine terrain"
+    continuity_rules:
+      - "Do not draw the yeti as a white bear, ordinary gorilla, or horned demon."
+    sources:
+      - type: "campaign-image"
+        value: "public/images/sessions/004/15_Combattimento_Contro_Gli_Yeti_v2_small.webp"
+
+  - id: "fire-giant"
+    name: "Fire Giant"
+    aliases:
+      - "gigante del fuoco"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "enormous humanoid giant in full plate armor"
+        - "oversized greatsword and throwable rocks"
+        - "disciplined martial silhouette associated with heat, fire, and heavy forging"
+    established_capabilities:
+      - "fire immunity"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/fire-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/fire-giant.png"
+
+  - id: "frost-giant"
+    name: "Frost Giant"
+    aliases:
+      - "gigante del gelo"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "enormous humanoid giant adapted to severe cold"
+        - "rough patchwork armor"
+        - "oversized greataxe and throwable rocks"
+    established_capabilities:
+      - "cold immunity"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/frost-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/frost-giant.png"
+
+  - id: "stone-giant"
+    name: "Stone Giant"
+    aliases:
+      - "gigante della pietra"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "lean but immensely powerful humanoid giant"
+        - "natural rocky palette suited to cavern and mountain camouflage"
+        - "oversized greatclub and throwable rocks"
+    established_capabilities:
+      - "stone camouflage"
+      - "rock catching"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/stone-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/stone-giant.png"
+
+  - id: "hill-giant"
+    name: "Hill Giant"
+    aliases:
+      - "gigante delle colline"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "massive heavyset humanoid giant"
+        - "crude practical clothing and equipment"
+        - "oversized greatclub and throwable rocks"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/hill-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/hill-giant.png"
+
+  - id: "cloud-giant"
+    name: "Cloud Giant"
+    aliases:
+      - "gigante delle nuvole"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "towering humanoid giant with refined, high-status presentation"
+        - "oversized morningstar and throwable rocks"
+        - "mist, cloud, flight, or weather motifs only when relevant to the scene"
+    established_capabilities:
+      - "innate cloud, flight, telekinesis, and weather magic"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/cloud-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/cloud-giant.png"
+
+  - id: "storm-giant"
+    name: "Storm Giant"
+    aliases:
+      - "gigante delle tempeste"
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "towering regal humanoid giant"
+        - "scale mail and oversized greatsword"
+        - "oceanic and storm motifs grounded in the current environment"
+    established_capabilities:
+      - "amphibious"
+      - "lightning and thunder immunity"
+      - "lightning strikes and weather magic"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/storm-giant"
+      image: "https://www.dnd5eapi.co/api/images/monsters/storm-giant.png"
+
+  - id: "ettin"
+    name: "Ettin"
+    aliases: []
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Large"
+      type: "giant"
+    visual_profile:
+      required_traits:
+        - "one hulking humanoid body with exactly two distinct heads"
+        - "two independently active arms wielding different weapons"
+        - "crude battle-worn clothing and equipment"
+      common_equipment:
+        - "battleaxe"
+        - "morningstar"
+    established_capabilities:
+      - "two independently alert heads"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/ettin"
+      image: "https://www.dnd5eapi.co/api/images/monsters/ettin.png"
+
+  - id: "hydra"
+    name: "Hydra"
+    aliases: []
+    resolution_status: "srd-verified"
+    taxonomy:
+      size: "Huge"
+      type: "monstrosity"
+    visual_profile:
+      required_traits:
+        - "massive reptilian body capable of walking and swimming"
+        - "five long serpentine necks and five biting heads by default"
+        - "shared body rather than five separate creatures"
+      dynamic_traits:
+        - "head count may increase when severed heads regrow"
+    established_capabilities:
+      - "multiple heads"
+      - "head regrowth unless suppressed by fire"
+      - "swimming and prolonged breath holding"
+    api:
+      provider: "dnd5eapi-2014"
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/hydra"
+      image: "https://www.dnd5eapi.co/api/images/monsters/hydra.png"

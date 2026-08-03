@@ -1,0 +1,24 @@
+schema_version: 1
+case_id: "dew-yakfolk-wall"
+executed_on: "2026-08-03"
+mode: "dry-run-no-image-generation"
+result: "passed"
+checks:
+  source_precedence: "passed"
+  character_resolution: "passed"
+  local_creature_resolution: "passed"
+  srd_api_resolution: "passed"
+  reference_image_mapping: "passed"
+  prompt_section_count: 10
+  prompt_sections_in_order: true
+  cast_completeness: "passed"
+  exact_figure_count: 8
+  aspect_ratio: "16:9"
+  visual_style_applied: "skt-european-graphic-novel-v1"
+  image_generated: false
+issues_found_and_fixed:
+  - issue: "The first draft stated seven visible figures instead of eight."
+    fix: "Corrected the spatial section to count Dew, three yakfolk, one elemental, and three prisoners."
+resolver_evidence:
+  yakfolk: "resolved from local campaign registry"
+  earth_elemental: "resolved from https://www.dnd5eapi.co/api/2014/monsters/earth-elemental"

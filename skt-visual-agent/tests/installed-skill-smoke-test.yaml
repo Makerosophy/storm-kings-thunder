@@ -1,0 +1,21 @@
+schema_version: 1
+case_id: "installed-skill-projectless-smoke-test"
+executed_on: "2026-08-03"
+invocation: "$skt-visual-agent"
+working_context: "projectless chat outside the campaign repository"
+result: "passed"
+checks:
+  skill_discovered_by_codex: true
+  installed_skill_loaded: true
+  portable_project_config_loaded: true
+  private_local_config_loaded: true
+  agent_workflow_loaded: true
+  characters_registry_loaded: true
+  creatures_registry_loaded: true
+  visual_style_loaded: true
+  character_portrait_resolved_from_registry: true
+  historical_blog_reachable: true
+  external_character_images_reachable: true
+  prompt_contract_sections: 10
+  prompt_contract_validation: "passed"
+  image_generated: false

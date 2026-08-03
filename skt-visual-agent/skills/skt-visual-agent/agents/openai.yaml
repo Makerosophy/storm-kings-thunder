@@ -1,0 +1,4 @@
+interface:
+  display_name: "SKT Visual Agent"
+  short_description: "Orchestra scene, personaggi e creature SKT"
+  default_prompt: "Usa $skt-visual-agent per trasformare questa descrizione di scena SKT in un’immagine coerente con la campagna."

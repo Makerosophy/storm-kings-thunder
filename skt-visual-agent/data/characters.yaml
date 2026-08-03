@@ -1,0 +1,406 @@
+schema_version: 2
+campaign: "Storm King's Thunder"
+profile_policy:
+  - "Treat identity facts as canonical only when supported by a blog or user source."
+  - "Treat visual traits as observations from the named reference image."
+  - "Do not turn equipment, effects, companions, injuries, or transformations visible in one image into permanent facts without corroboration."
+
+characters:
+  - id: "aerendir-frostwood"
+    name: "Aerendir Frostwood"
+    aliases:
+      - "Aerendir"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "eladrin"
+      gender: "male"
+      class: "druid"
+      subclass: "Circle of the Moon"
+      affiliations:
+        - "Emerald Enclave"
+      origin_or_ties:
+        - "Feywild"
+        - "Forest of the Arn"
+    reference_images:
+      - inventory_id: "aerendir-in-battaglia"
+        filename: "Aerendir in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "young adult"
+      build: "lean, athletic"
+      skin: "fair skin with visible freckles across the cheeks and nose"
+      hair: "shoulder-length golden blond hair, loose and wind-swept"
+      eyes: "pale blue-gray"
+      face: "angular, clean-shaven face with pronounced cheekbones"
+      ears: "long, sharply pointed elven ears"
+      clothing_and_armor:
+        - "weathered layered brown leather armor"
+        - "muted olive underlayers"
+        - "dark teal scarf or cowl"
+        - "leather bracers and fingerless gloves"
+      primary_equipment:
+        - "wooden shortbow"
+        - "quiver of arrows"
+      distinctive_features:
+        - "golden blond hair"
+        - "freckled face"
+        - "pale blue-gray eyes"
+      reference_only_elements:
+        - "A large brown eagle with a white head flies behind him; its role as a persistent companion is not confirmed."
+    established_capabilities:
+      - "Moon druid Wild Shape; animal form is temporary and scene-dependent."
+      - "Uses druidic nature and weather magic."
+      - "Uses a shortbow when fighting in humanoid form."
+    known_temporary_forms:
+      - "dog"
+      - "eagle"
+      - "panther"
+      - "polar bear"
+      - "rhinoceros"
+      - "saber-toothed tiger"
+    continuity_rules:
+      - "Use the reference image for Aerendir's humanoid face, hair, ears, build, and palette."
+      - "Do not show an animal form unless the current scene explicitly places Aerendir in Wild Shape."
+      - "Do not automatically include the eagle from the portrait as a companion."
+      - "Use a shortbow as his default ranged weapon when the scene does not specify another weapon."
+    sources:
+      - type: "reference-image"
+        value: "aerendir-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:15"
+        supports:
+          - "full name"
+          - "eladrin"
+          - "Emerald Enclave"
+      - type: "blog"
+        value: "src/content/blog/13-avventura.mdx:69"
+        supports:
+          - "Circle of the Moon druid"
+          - "Wild Shape"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:33"
+        supports:
+          - "shortbow"
+
+  - id: "dew"
+    name: "Dew"
+    aliases: []
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "water genasi"
+      gender: "male"
+      class: "monk"
+      subclass: null
+      affiliations: []
+      origin_or_ties: []
+    reference_images:
+      - inventory_id: "dew-in-battaglia"
+        filename: "Dew in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "powerful, muscular, agile"
+      skin: "deep cobalt blue with lighter flowing, water-like markings across the chest, shoulders, and face"
+      hair: "short, tousled white hair"
+      eyes: "very pale blue-white"
+      face: "strong angular face with a short pointed white goatee"
+      ears: "long pointed ears"
+      clothing_and_armor:
+        - "dark charcoal sleeveless monk wraps and layered trousers"
+        - "wrapped forearms, wrists, ankles, and feet"
+        - "loose fabric designed for unrestricted movement"
+      primary_equipment:
+        - "unarmed martial arts"
+        - "magic staff when stated by the scene"
+        - "magic tattoo created by Kyle"
+      distinctive_features:
+        - "cobalt-blue skin"
+        - "white hair and pointed goatee"
+        - "water-like body markings"
+      reference_only_elements:
+        - "Water coils around his hands and feet to emphasize motion."
+    established_capabilities:
+      - "Creates and manipulates water and ice, including walls of ice and water whips."
+      - "Fights with rapid unarmed strikes and a staff."
+      - "The magic tattoo can manifest water-like extensions or a rotating staff."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Preserve Dew's cobalt-blue skin, white hair, pointed goatee, facial structure, and water-like markings."
+      - "Portray water and ice effects as extensions of martial movement rather than generic wizard spellcasting."
+      - "Keep his clothing flexible and unarmored unless the current scene states otherwise."
+      - "Do not add a conventional weapon when the scene calls for unarmed combat."
+    sources:
+      - type: "reference-image"
+        value: "dew-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/9-avventura.mdx:11"
+        supports:
+          - "water genasi"
+          - "monk"
+      - type: "blog"
+        value: "src/content/blog/10-avventura.mdx:244"
+        supports:
+          - "magic tattoo"
+          - "water-like extensions"
+          - "martial agility"
+      - type: "blog"
+        value: "src/content/blog/11-avventura.mdx:89"
+        supports:
+          - "magic staff"
+          - "water whip"
+      - type: "blog"
+        value: "src/content/blog/16-avventura.mdx:47"
+        supports:
+          - "wall of ice"
+
+  - id: "krjiv-linxakasendalor"
+    name: "Krjiv Linxakasèndalor"
+    aliases:
+      - "Krjiv"
+      - "Krijiv"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "dragonborn"
+      gender: "male"
+      class: "fighter"
+      subclass: "spellcasting warrior; exact rules subclass not confirmed"
+      affiliations:
+        - "Harpers"
+      origin_or_ties:
+        - "Tymanther"
+        - "Djerad Thymar"
+    reference_images:
+      - inventory_id: "krjiv-in-battaglia-v2"
+        filename: "Krjiv in battaglia v2.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "very tall, broad, and heavily muscular"
+      scales: "dark charcoal to black scales with lighter gray facial plates"
+      eyes: "glowing red"
+      head: "long draconic muzzle, swept-back ridged horns, and a crown of backward-pointing spines"
+      hair: "long black mane behind the horns"
+      body:
+        - "large clawed hands and feet"
+        - "thick scaled tail"
+      clothing_and_armor:
+        - "heavy layered dark steel plate and scale armor"
+        - "brown leather harnesses and straps"
+        - "weathered black split cloak"
+      primary_equipment:
+        - "massive double-headed battleaxe"
+      distinctive_features:
+        - "dark scales"
+        - "red eyes"
+        - "back-swept horns and head spines"
+        - "thick tail"
+    established_capabilities:
+      - "Combines heavy melee combat with spellcasting."
+      - "Uses an enormous battleaxe as his current recurring weapon."
+      - "Can channel elemental effects including fire, cold wind, lightning, and rays of heat when the scene supports them."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Preserve Krjiv's draconic head, dark scales, red eyes, horns, spines, tail, and massive silhouette."
+      - "Do not depict him as a human, lizardfolk, winged dragon, or hornless humanoid."
+      - "Use the massive battleaxe as his default current weapon; the blog records an older halberd only in the earliest session."
+      - "Keep elemental magic secondary to his armored melee identity unless the current scene emphasizes spellcasting."
+    uncertainties:
+      - "The blog calls him a 'stregone-guerriero' but does not establish the exact tabletop subclass in the reviewed passages."
+    sources:
+      - type: "reference-image"
+        value: "krjiv-in-battaglia-v2"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:15"
+        supports:
+          - "full name"
+          - "Tymanther"
+          - "Harpers"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:23-25"
+        supports:
+          - "dragonborn"
+      - type: "blog"
+        value: "src/content/blog/10-avventura.mdx:244"
+        supports:
+          - "spellcasting warrior"
+          - "enormous battleaxe"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:33"
+        supports:
+          - "current axe"
+
+  - id: "kyle-greenwind"
+    name: "Kyle Greenwind"
+    aliases:
+      - "Kyle"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "half-elf"
+      gender: "male"
+      class: "paladin"
+      subclass: "Oath of the Ancients"
+      affiliations:
+        - "Paladins of the Ancients"
+      origin_or_ties:
+        - "Feywild"
+      family:
+        father: "Eldrin Greenwind"
+    reference_images:
+      - inventory_id: "kyle-in-battaglia"
+        filename: "Kyle in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "athletic and strong"
+      skin: "warm tan complexion"
+      hair: "medium-length wavy black hair, swept loosely away from the face"
+      eyes: "bright green"
+      face: "angular face with dark eyebrows and short black stubble"
+      ears: "prominent pointed half-elven ears"
+      markings:
+        - "black angular branching mark across the right forehead and temple"
+      clothing_and_armor:
+        - "brown layered leather armor over dark chainmail"
+        - "ornate dark bronze shoulder armor"
+        - "leather bracers and practical travel layers"
+      primary_equipment:
+        - "glaive or falcione"
+        - "sacred medallion"
+      distinctive_features:
+        - "wavy black hair"
+        - "bright green eyes"
+        - "black angular temple mark"
+    established_capabilities:
+      - "Ancients paladin healing, protection, and divine nature magic."
+      - "Fights with a glaive or falcione using broad rotational movements and reach."
+      - "Creates magical tattoos; this does not imply that every visible mark is temporary."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Use Kyle Greenwind as the canonical name."
+      - "Preserve his black wavy hair, green eyes, angular temple mark, half-elven ears, stubble, and athletic build."
+      - "Use a glaive or falcione as his default weapon; do not replace it with a sword or simple spear."
+      - "Keep his equipment grounded and travel-worn rather than glossy ceremonial plate unless the scene states otherwise."
+    sources:
+      - type: "reference-image"
+        value: "kyle-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/10-avventura.mdx:358"
+        supports:
+          - "canonical current full name"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:15"
+        supports:
+          - "full name"
+          - "Oath of the Ancients paladin"
+      - type: "user-confirmed-correction"
+        value: "2026-08-03: Greenwich was a typo; Greenwind is correct."
+        supports:
+          - "canonical surname"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:56"
+        supports:
+          - "half-elf"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:33"
+        supports:
+          - "falcione"
+      - type: "blog"
+        value: "src/content/blog/18-avventura.mdx:73"
+        supports:
+          - "glaive"
+
+  - id: "traumer"
+    name: "Traumer"
+    aliases: []
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "elf"
+      gender: "male"
+      class: "druid"
+      subclass: "Circle of Dreams"
+      affiliations:
+        - "Circle of Dreams of Silverwood"
+      origin_or_ties:
+        - "Silverwood"
+        - "Feywild"
+      family:
+        father: "Elowe"
+        mother: "Lirael"
+    reference_images:
+      - inventory_id: "traumer-in-battaglia"
+        filename: "Traumer in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "lean, graceful"
+      skin: "light warm complexion"
+      hair: "very long, flowing silver-white hair"
+      eyes: "pale blue-green"
+      face: "long angular clean-shaven face"
+      ears: "long pointed elven ears"
+      clothing_and_armor:
+        - "layered dark forest-green robes and cloak"
+        - "weathered brown belt, pouches, and leather bracers"
+        - "muted earth-toned trousers"
+      primary_equipment:
+        - "long wooden Staff of Diirinka with a root-wrapped glowing green crystal"
+      distinctive_features:
+        - "waist-length silver-white hair"
+        - "green layered robes"
+        - "crystal-tipped wooden staff"
+      reference_only_elements:
+        - "Pale green-blue magic, leaves, and wind spiral around the staff and body."
+    established_capabilities:
+      - "Dreams druid healing, summoning, nature, weather, and dream magic."
+      - "Uses the Staff of Diirinka for planar convergence and temporal or dream-related effects."
+      - "Can use temporary animal transformations when explicitly stated by the scene."
+    known_temporary_forms:
+      - "vulture"
+      - "spider-like form"
+    continuity_rules:
+      - "Preserve Traumer's long silver-white hair, elven face and ears, green robes, and crystal-tipped staff."
+      - "Do not portray him as Aerendir: Traumer has silver-white hair and dream-associated green magic; Aerendir is golden blond and uses Moon druid forms."
+      - "Treat animal transformations and demonic facial changes as temporary scene states only."
+      - "Use the Staff of Diirinka when the current scene involves his planar, temporal, or dream powers."
+    sources:
+      - type: "reference-image"
+        value: "traumer-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/9-avventura.mdx:11"
+        supports:
+          - "Circle of Dreams druid"
+      - type: "blog"
+        value: "src/content/blog/10-avventura.mdx:103"
+        supports:
+          - "name"
+          - "Circle of Dreams of Silverwood"
+      - type: "blog"
+        value: "src/content/blog/13-avventura.mdx:257"
+        supports:
+          - "Staff of Diirinka"
+          - "planar convergence"
+      - type: "blog"
+        value: "src/content/blog/16-avventura.mdx:255"
+        supports:
+          - "elf"
+          - "temporary demonic facial change"
+      - type: "blog"
+        value: "src/content/blog/17-avventura.mdx:235"
+        supports:
+          - "Circle of Dreams representative"
+          - "Feywild rite"

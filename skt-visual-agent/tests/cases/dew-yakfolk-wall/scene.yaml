@@ -1,0 +1,24 @@
+schema_version: 1
+case_id: "dew-yakfolk-wall"
+purpose: "End-to-end dry run; this synthetic fixture is not additional campaign canon."
+authoritative_scene_it: >-
+  Di notte, nel villaggio fortificato degli yakfolk, Dew innalza un muro di
+  ghiaccio per proteggere tre prigionieri rinchiusi in gabbie di legno.
+  Kartha-Kaya, armato di spada fiammeggiante, e due evocatrici yakfolk cercano
+  di aggirare i lati opposti del muro. Un elementale della terra già evocato
+  avanza frontalmente e solleva i pugni di roccia per abbattere la barriera.
+  Dew è l'unico personaggio giocante visibile.
+requirements:
+  visible_player_characters:
+    - "Dew"
+  visible_named_npcs:
+    - "Kartha-Kaya"
+  creature_counts:
+    yakfolk_total: 3
+    yakfolk_evokers: 2
+    earth_elementals: 1
+  prisoners: 3
+  location: "fortified yakfolk mountain village"
+  time: "night"
+  aspect_ratio: "16:9"
+  generate_image: false

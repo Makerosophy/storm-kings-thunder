@@ -28,3 +28,7 @@ pnpm-debug.log*
 
 # local docs (Word source files, not for git)
 public/docs/
+
+# local SKT visual-agent configuration and private assets
+skt-visual-agent/config/local.json
+skt-visual-agent/private/

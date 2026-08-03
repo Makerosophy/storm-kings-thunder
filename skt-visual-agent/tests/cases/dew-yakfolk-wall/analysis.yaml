@@ -1,0 +1,54 @@
+schema_version: 1
+case_id: "dew-yakfolk-wall"
+scene_authority: "tests/cases/dew-yakfolk-wall/scene.yaml"
+resolution:
+  characters:
+    - name: "Dew"
+      status: "resolved"
+      registry_id: "dew"
+      reference_image: "dew-in-battaglia"
+      applied_traits:
+        - "water genasi monk"
+        - "cobalt-blue skin"
+        - "short white hair and pointed white goatee"
+        - "water-like markings and magic tattoo"
+        - "dark flexible monk wraps"
+  creatures:
+    - name: "Yakfolk"
+      status: "resolved-local"
+      registry_id: "yakfolk"
+      variants:
+        - name: "Kartha-Kaya"
+          count: 1
+          equipment: "flaming sword"
+        - name: "yakfolk evoker"
+          count: 2
+      applied_traits:
+        - "upright anthropomorphic yak anatomy"
+        - "bovine yak heads, broad horns, and long shaggy fur"
+        - "mountain hides, leather, weathered armor, and spellcaster elements"
+    - name: "Earth Elemental"
+      status: "resolved-srd-api"
+      registry_id: "earth-elemental"
+      count: 1
+      endpoint: "https://www.dnd5eapi.co/api/2014/monsters/earth-elemental"
+      reference_image: "https://www.dnd5eapi.co/api/images/monsters/earth-elemental.png"
+      applied_traits:
+        - "Large elemental"
+        - "hulking humanoid mass of unworked stone and earth"
+        - "massive arms and slam attacks"
+  environment:
+    status: "resolved-from-current-scene-and-campaign-reference"
+    applied_traits:
+      - "nighttime fortified high-mountain village"
+      - "timber palisades, round huts, stone terraces, and distant waterfall"
+      - "three wooden prisoner cages behind Dew"
+inferences:
+  - "Cold moonlight and sparse torchlight are conservative lighting choices consistent with the explicit nighttime setting."
+unresolved: []
+excluded:
+  player_characters:
+    - "Aerendir Frostwood"
+    - "Krjiv Linxakasèndalor"
+    - "Kyle Greenwind"
+    - "Traumer"

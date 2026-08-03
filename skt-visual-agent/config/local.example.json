@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "campaign_root": "/absolute/path/to/storm-kings-thunder",
+  "portrait_root": "/absolute/path/to/private/character-portraits"
+}

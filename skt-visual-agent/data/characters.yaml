@@ -404,3 +404,294 @@ characters:
         supports:
           - "Circle of Dreams representative"
           - "Feywild rite"
+
+  - id: "evgar-rotlorund"
+    name: "Evgar Rotlorund"
+    aliases:
+      - "Evgar"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "human"
+      gender: "male"
+      class: "barbarian"
+      subclass: null
+      affiliations:
+        - "Uthgardt"
+        - "Black Raven tribe"
+      origin_or_ties:
+        - "Raven Rock"
+    reference_images:
+      - inventory_id: "evgar-in-battaglia"
+        filename: "Evgar in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "extremely tall, broad, and heavily muscular"
+      skin: "weathered warm complexion covered with blue-black tribal tattoos"
+      hair: "long dark brown-black hair with small braids"
+      eyes: "dark"
+      face: "broad stern face, very full long dark beard, and vertical blue-black face paint"
+      clothing_and_armor:
+        - "heavy dark-brown fur mantle"
+        - "layered weathered hides and leather"
+        - "leather bracers and cold-climate boots"
+      primary_equipment:
+        - "massive two-handed maul"
+      distinctive_features:
+        - "dense geometric Uthgardt tattoos"
+        - "vertical blue-black face paint"
+        - "long dark beard and braided hair"
+        - "heavy fur mantle"
+    established_capabilities:
+      - "Barbarian rage and close combat with a massive maul."
+      - "Can temporarily increase his size when the current scene states it."
+      - "Later assimilated elemental power from a giant relic; show it only when scene-relevant."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Preserve Evgar's face, dark hair and beard, tribal paint, tattoos, fur mantle, and massive build."
+      - "Use a massive two-handed maul as his default weapon."
+      - "Do not portray temporary enlargement or elemental power unless the current scene states it."
+      - "Do not portray him as a dwarf or giant."
+    sources:
+      - type: "reference-image"
+        value: "evgar-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/4-avventura.mdx:95-99"
+        supports:
+          - "Uthgardt barbarian"
+          - "tribal tattoos"
+          - "temporary enlargement"
+          - "maul"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:33"
+        supports:
+          - "magic maul"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:93"
+        supports:
+          - "Black Raven tribe"
+          - "Raven Rock"
+      - type: "blog"
+        value: "src/content/blog/13-avventura.mdx:189"
+        supports:
+          - "later elemental power"
+
+  - id: "huldur-winedale"
+    name: "Huldur Winedale"
+    aliases:
+      - "Huldur"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "dwarf"
+      gender: "male"
+      class: "cleric"
+      subclass: "forge-associated cleric of Moradin; exact rules domain not confirmed"
+      affiliations:
+        - "Citadel Adbar"
+        - "Risolutori"
+      origin_or_ties:
+        - "Citadel Adbar"
+      military_role: "medical corporal"
+    reference_images:
+      - inventory_id: "huldur-in-battaglia"
+        filename: "Huldur in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "adult"
+      build: "short, broad, and powerful"
+      skin: "fair, weathered complexion"
+      hair: "thick swept-back copper-red hair"
+      eyes: "pale blue in the supplied primary visual reference"
+      face: "broad dwarven face with a huge curled copper-red moustache and long full beard"
+      markings:
+        - "short dark markings on both cheeks"
+      clothing_and_armor:
+        - "heavy weathered dwarven plate armor"
+        - "dark steel and silver with restrained red and bronze details"
+      primary_equipment:
+        - "one-handed warhammer Ragioniere"
+        - "sturdy shield bearing an incandescent hammer on an anvil"
+      distinctive_features:
+        - "copper-red hair"
+        - "massive decorated beard with red wraps and metal beads"
+        - "pale blue eyes"
+        - "cheek markings"
+    established_capabilities:
+      - "Moradin cleric healing, protection, spiritual weapon, and forge rituals."
+      - "Served as a medical corporal and explorer of Citadel Adbar."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Preserve Huldur's red hair, moustache, decorated beard, broad face, pale eyes, cheek markings, and dwarf proportions."
+      - "Use Ragioniere and the hammer-on-anvil shield as his default combat equipment."
+      - "Portray divine and forge magic as restrained warm metallic light, not generic wizard spellcasting."
+    uncertainties:
+      - "The blog mentions a mobile eye in an orbital cavity, while the supplied primary visual reference shows two pale-blue eyes; follow the current user request and primary reference unless explicitly corrected."
+    sources:
+      - type: "reference-image"
+        value: "huldur-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "blog"
+        value: "src/content/blog/1-avventura.mdx:15"
+        supports:
+          - "dwarf explorer"
+          - "Citadel Adbar"
+      - type: "blog"
+        value: "src/content/blog/4-avventura.mdx:29"
+        supports:
+          - "cleric of Moradin"
+      - type: "blog"
+        value: "src/content/blog/4-avventura.mdx:97"
+        supports:
+          - "shield with incandescent hammer-on-anvil symbol"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:33"
+        supports:
+          - "magic hammer"
+      - type: "blog"
+        value: "src/content/blog/7-avventura.mdx:63"
+        supports:
+          - "medical corporal"
+          - "Risolutori spokesman"
+      - type: "blog"
+        value: "src/content/blog/5-avventura.mdx:19"
+        supports:
+          - "historical mobile-eye description"
+
+  - id: "zephyr-nightblade"
+    name: "Zephyr Nightblade"
+    aliases:
+      - "Zephyr"
+    type: "player-character"
+    status: "verified-initial-profile"
+    identity:
+      species: "tiefling"
+      gender: "male"
+      age: 27
+      height: "1.75 m"
+      class: "warlock"
+      level_at_character_sheet: 10
+      subclass: "Hexblade"
+      pact_boon: "Pact of the Blade"
+      background: "criminal / spy"
+      alignment: "chaotic neutral"
+      affiliations: []
+      origin_or_ties:
+        - "Waterdeep"
+        - "Luskan"
+        - "Bregan D'aerthe contact"
+        - "Underdark expedition with Brom"
+    reference_images:
+      - inventory_id: "zephyr-in-battaglia"
+        filename: "Zephyr in battaglia.png"
+        role: "primary-visual-reference"
+    visual_profile:
+      apparent_age: "young adult"
+      build: "lean, athletic, and agile"
+      skin: "deep red with dark charcoal stripe-like markings across the face, chest, shoulders, arms, and tail"
+      hair: "very long, thick, wavy black hair"
+      eyes: "solid black"
+      face: "sharp angular clean-shaven face with high cheekbones"
+      ears: "long pointed tiefling ears"
+      horns: "a deliberately asymmetric pair of ridged black horns: the left horn remains full-length and curves upward and outward; the right horn was cut by a knife at approximately half its original length, retaining the same natural curve and ending in an elegant healed break"
+      permanent_injuries:
+        - "right horn cut by a knife at approximately half length; its clean healed fracture must remain visible as a distinctive aesthetic element"
+      body:
+        - "long red tiefling tail"
+      clothing_and_armor:
+        - "dark layered leather and light armor"
+        - "asymmetrical dark spiked shoulder guard"
+        - "weathered torn black Cloak of Displacement"
+        - "dark leather straps, belts, bracers, trousers, and boots"
+      primary_equipment:
+        - "intelligent one-handed pact blade Alba, also called Bringer of Dawn"
+      distinctive_features:
+        - "deep red skin"
+        - "solid black eyes"
+        - "full-length curved black left horn paired with an aesthetically broken half-length right horn"
+        - "long black hair"
+        - "dark body markings"
+        - "red tail"
+      reference_only_elements:
+        - "The birds surrounding Zephyr in the original portrait are environmental and are not a persistent companion or power."
+    established_capabilities:
+      - "Hexblade warlock magic, including Eldritch Blast, Hexblade's Curse, and Armor of Hexes."
+      - "Pact of the Blade melee combat using Alba / Bringer of Dawn."
+      - "Can create an Accursed Specter after slaying a humanoid; the specter is temporary and scene-dependent."
+      - "Has tiefling darkvision and resistance to fire."
+      - "Uses stealth, deception, persuasion, and infiltration skills from his criminal and spy background."
+    known_temporary_forms: []
+    backstory:
+      - "A drow paladin of Lolth killed Zephyr's brother during a failed Bregan D'aerthe job in Waterdeep."
+      - "Mortally wounded, Zephyr accepted power from an unnamed female patron who shared his desire to curse the killer."
+      - "He kept his brother's necklace and travelled toward Luskan seeking information and revenge."
+    continuity_rules:
+      - "Preserve Zephyr's angular face, red skin, black eyes, long black hair, pointed ears, dark markings, tail, and lean build."
+      - "Always preserve the permanent horn injury: Zephyr's right horn was cut by a knife at approximately half its original length. Keep enough of its upward curve to create a deliberate asymmetric silhouette, with a clean healed diagonal break as an aesthetic signature; the left horn remains full-length. Never reduce the right horn to a near-base stump. This user correction overrides both primary portraits, which predate or omit the injury."
+      - "Use Alba / Bringer of Dawn as his default visible weapon; depict it as a refined one-handed pact blade with restrained pale and spectral emerald energy."
+      - "Keep his armor and cloak dark, practical, weathered, and suited to stealth rather than glossy ceremonial armor."
+      - "Do not add wings or portray Zephyr as a human, elf, cambion, or generic horned demon."
+      - "Do not show an Accursed Specter, magical flight, invisibility, or other temporary spell effects unless the current scene requests them."
+      - "Do not automatically include the birds from the original portrait."
+    sources:
+      - type: "reference-image"
+        value: "zephyr-in-battaglia"
+        supports:
+          - "visual_profile"
+      - type: "user-correction"
+        value: "2026-08-14: Zephyr's right horn was cut by a knife and remains at half length, arranged as a distinctive aesthetic feature"
+        supports:
+          - "permanent right-horn injury"
+      - type: "character-sheet-pdf"
+        value: "user-100938594_107549175.pdf:1"
+        supports:
+          - "full name"
+          - "tiefling"
+          - "warlock level 10"
+          - "criminal / spy background"
+          - "statistics and defenses"
+      - type: "character-sheet-pdf"
+        value: "user-100938594_107549175.pdf:2"
+        supports:
+          - "Hexblade"
+          - "Pact of the Blade"
+          - "warlock features"
+          - "Alba / Bringer of Dawn"
+          - "Cloak of Displacement"
+      - type: "character-sheet-pdf"
+        value: "user-100938594_107549175.pdf:3"
+        supports:
+          - "tiefling traits"
+          - "fire resistance"
+          - "Fey Touched"
+      - type: "character-sheet-pdf"
+        value: "user-100938594_107549175.pdf:5"
+        supports:
+          - "age, height, skin, eyes, and hair"
+          - "alignment"
+          - "personality"
+          - "backstory"
+      - type: "character-sheet-pdf"
+        value: "user-100938594_107549175.pdf:6"
+        supports:
+          - "warlock spells"
+      - type: "blog"
+        value: "src/content/blog/8-avventura.mdx:315"
+        supports:
+          - "tiefling warlock"
+          - "travels with Brom"
+      - type: "blog"
+        value: "src/content/blog/8-avventura.mdx:407"
+        supports:
+          - "intelligent blade Alba"
+          - "light emitted by Alba"
+      - type: "blog"
+        value: "src/content/blog/8-avventura.mdx:425-437"
+        supports:
+          - "Underdark expedition"
+          - "Underdark guide"
+          - "mission to Gravenhollow and Mantol-Derith"

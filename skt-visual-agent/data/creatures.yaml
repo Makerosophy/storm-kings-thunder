@@ -99,7 +99,7 @@ creatures:
       - type: "campaign-image"
         value: "public/images/sessions/017/09_Yakfolk_v2_resized.jpg"
       - type: "campaign-image"
-        value: "public/images/sessions/018/02_Scontro con Yakfolk_resized.jpg"
+        value: "public/images/sessions/018/02_Scontro con Yakfolk_resized.webp"
 
   - id: "worg"
     name: "Worg"

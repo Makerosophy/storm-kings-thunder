@@ -108,7 +108,7 @@ characters:
       hair: "short, tousled white hair"
       eyes: "very pale blue-white"
       face: "strong angular face with a short pointed white goatee"
-      ears: "long pointed ears"
+      ears: "humanlike ears with softly rounded contours, never pointed"
       clothing_and_armor:
         - "dark charcoal sleeveless monk wraps and layered trousers"
         - "wrapped forearms, wrists, ankles, and feet"
@@ -130,6 +130,7 @@ characters:
     known_temporary_forms: []
     continuity_rules:
       - "Preserve Dew's cobalt-blue skin, white hair, pointed goatee, facial structure, and water-like markings."
+      - "Dew has humanlike rounded ears, not elven pointed ears; correct the older portrait on this detail while preserving the rest of his likeness."
       - "Portray water and ice effects as extensions of martial movement rather than generic wizard spellcasting."
       - "Keep his clothing flexible and unarmored unless the current scene states otherwise."
       - "Do not add a conventional weapon when the scene calls for unarmed combat."
@@ -138,6 +139,11 @@ characters:
         value: "dew-in-battaglia"
         supports:
           - "visual_profile"
+      - type: "canonical-rules-correction"
+        value: "https://5e.tools/races.html#water_eepc"
+        supports:
+          - "water genasi are generally human-built and the water variant does not establish pointed ears"
+          - "rounded humanlike ears used for Dew"
       - type: "blog"
         value: "src/content/blog/9-avventura.mdx:11"
         supports:
@@ -183,7 +189,7 @@ characters:
     visual_profile:
       apparent_age: "adult"
       build: "very tall, broad, and heavily muscular"
-      scales: "dark charcoal to black scales with lighter gray facial plates"
+      scales: "silver-dragon scales: layered silver-white to cool steel-gray plates with subtle darker shading between scales and physically credible metallic reflection"
       eyes: "glowing red"
       head: "long draconic muzzle, swept-back ridged horns, and a crown of backward-pointing spines"
       hair: "long black mane behind the horns"
@@ -195,21 +201,26 @@ characters:
         - "brown leather harnesses and straps"
         - "weathered black split cloak"
       primary_equipment:
-        - "massive double-headed battleaxe"
+        - "Flame Tongue greatsword acquired from Kartha-Kaya at the end of session 18"
+        - "massive double-headed battleaxe used as his recurring weapon before session 18"
       distinctive_features:
-        - "dark scales"
+        - "silver-dragon scales"
         - "red eyes"
         - "back-swept horns and head spines"
         - "thick tail"
     established_capabilities:
       - "Combines heavy melee combat with spellcasting."
-      - "Uses an enormous battleaxe as his current recurring weapon."
+      - "From session 18 onward, owns and can wield a Flame Tongue greatsword whose blade erupts in flame when activated."
+      - "Used an enormous double-headed battleaxe as his recurring weapon before acquiring the Flame Tongue."
       - "Can channel elemental effects including fire, cold wind, lightning, and rays of heat when the scene supports them."
     known_temporary_forms: []
     continuity_rules:
-      - "Preserve Krjiv's draconic head, dark scales, red eyes, horns, spines, tail, and massive silhouette."
+      - "Preserve Krjiv's draconic head, silver-dragon scales, red eyes, horns, spines, tail, and massive silhouette."
+      - "The primary portrait predates the confirmed silver coloration: use it for Krjiv's face, muzzle, horns, spines, mane, build, armor, and anatomy, but never copy its black scale color."
       - "Do not depict him as a human, lizardfolk, winged dragon, or hornless humanoid."
-      - "Use the massive battleaxe as his default current weapon; the blog records an older halberd only in the earliest session."
+      - "For scenes from session 18 onward, use the Flame Tongue greatsword as Krjiv's default current weapon unless the scene specifies another loadout."
+      - "Show the Flame Tongue blade burning only when Krjiv has activated it or the current scene explicitly emphasizes its flames."
+      - "For scenes before session 18, do not show the Flame Tongue; use the historically appropriate battleaxe or the older halberd recorded in the earliest session."
       - "Keep elemental magic secondary to his armored melee identity unless the current scene emphasizes spellcasting."
     uncertainties:
       - "The blog calls him a 'stregone-guerriero' but does not establish the exact tabletop subclass in the reviewed passages."
@@ -236,7 +247,21 @@ characters:
       - type: "blog"
         value: "src/content/blog/7-avventura.mdx:33"
         supports:
-          - "current axe"
+          - "battleaxe before session 18"
+      - type: "blog"
+        value: "src/content/blog/18-avventura.mdx:357"
+        supports:
+          - "acquisition of Kartha-Kaya's flaming sword at the end of session 18"
+      - type: "user-confirmed-continuity"
+        value: "2026-08-21: from session 18 onward, Krjiv owns a Flame Tongue greatsword."
+        supports:
+          - "item identity"
+          - "acquisition session"
+      - type: "user-confirmed-correction"
+        value: "2026-08-23: Krjiv has the scales of a silver dragon."
+        supports:
+          - "scale color"
+          - "dragon ancestry appearance"
 
   - id: "kyle-greenwind"
     name: "Kyle Greenwind"
@@ -695,3 +720,119 @@ characters:
           - "Underdark expedition"
           - "Underdark guide"
           - "mission to Gravenhollow and Mantol-Derith"
+
+  - id: "contrary"
+    name: "Contrary"
+    aliases: []
+    type: "non-player-character"
+    status: "verified-visual-profile"
+    identity:
+      species: "human"
+      gender: "male"
+      age: null
+      class:
+        - "fighter 2"
+        - "wizard 18"
+      subclass: "Diviner"
+      background: "Scribe"
+      level_at_character_sheet: 20
+      alignment: null
+      affiliations: []
+      origin_or_ties: []
+    reference_images:
+      - inventory_id: "contrary-face-reference"
+        filename: "Contrary.png"
+        role: "primary-identity-and-face-reference"
+      - inventory_id: "contrary-full-scene-reference"
+        filename: "contrary-visual-reference.webp"
+        role: "secondary-full-scene-reference"
+    visual_profile:
+      apparent_age: "between thirty and forty years old"
+      build: "the sheet does not specify physique; any visible physical power should read as the supernatural effect of the Belt of Storm Giant Strength rather than exaggerated musculature"
+      skin: "light-to-medium warm complexion"
+      hair: "medium-length tousled wavy black hair"
+      eyes: "gray-brown, focused and severe"
+      face: "mature masculine angular face with strong cheekbones, a firm jaw, straight nose, thick dark eyebrows, and a short dark beard and mustache"
+      clothing_and_armor:
+        - "Robe of the Archmagi, rendered as elegant rune-adorned cloth; its exact color is not specified"
+        - "adamantine half plate worn beneath or integrated with the robe"
+      primary_equipment:
+        - "Staff of the Magi"
+        - "+3 shield"
+        - "Belt of Storm Giant Strength"
+      distinctive_features:
+        - "fine violet arcane vein-like markings branching across the forehead, temples, bridge of the nose, and cheeks"
+        - "small circular divinatory motif centered high on the forehead"
+        - "composed diviner-scribe presence"
+        - "the visual contradiction between an erudite archmage and Strength 29"
+        - "practical fusion of legendary arcane regalia and battle-ready protection"
+    established_capabilities:
+      - "Level 18 Diviner wizard with Portent, Expert Divination, The Third Eye, Greater Portent, Spell Mastery, and level 9 spells."
+      - "Level 2 fighter with Second Wind and Action Surge."
+      - "Strength 29 while wearing the Belt of Storm Giant Strength."
+      - "Uses the Staff of the Magi for melee, spell absorption, and its contained spells."
+      - "Uses a +3 shield and adamantine half plate; the sheet records Armor Class 23 and immunity to critical hits."
+      - "Uses high-level divination and control magic, including Foresight, Wish, Forcecage, Maze, Arcane Eye, and Synaptic Static."
+    known_temporary_forms: []
+    continuity_rules:
+      - "Always portray Contrary as human, never as a giant; the extraordinary strength comes from the belt."
+      - "Preserve the central contrast: a disciplined diviner and scribe who is also physically formidable and battle-ready."
+      - "Use Contrary.png as the canonical source for his face, apparent age, hair, beard, eyes, and violet facial markings."
+      - "Always preserve the fine violet branching facial markings and the small circular divinatory motif centered high on his forehead."
+      - "When equipment is visible, prioritize the Staff of the Magi, the storm-giant belt, rune-adorned archmage robes, and dark adamantine half plate."
+      - "The +3 shield is owned equipment but is not part of Contrary's default visual silhouette; show it only when the current scene explicitly requires it."
+      - "Do not include the Cloak of Displacement by default: it appears in inventory but is not listed among the three attuned items."
+      - "Render divination as controlled, purposeful visions or spatial refractions, not random decorative particles or unreadable floating text."
+      - "Do not infer exact chronological age, alignment, or backstory from the character sheet."
+    uncertainties:
+      - "Exact chronological age, alignment, height, weight, personality, ideals, bonds, flaws, affiliations, and backstory are blank on page 5 of the supplied sheet."
+    sources:
+      - type: "character-sheet-pdf"
+        value: "Contrary.pdf:1"
+        supports:
+          - "name"
+          - "human"
+          - "fighter 2 / wizard 18"
+          - "Scribe background"
+          - "statistics, defenses, Armor Class 23, and Staff of the Magi attack"
+      - type: "character-sheet-pdf"
+        value: "Contrary.pdf:2-4"
+        supports:
+          - "Diviner and fighter features"
+          - "equipment and attuned items"
+          - "feats and human traits"
+      - type: "character-sheet-pdf"
+        value: "Contrary.pdf:5"
+        supports:
+          - "absence of supplied appearance, personality, affiliations, and backstory"
+      - type: "character-sheet-pdf"
+        value: "Contrary.pdf:6-7"
+        supports:
+          - "wizard spell list"
+      - type: "user-reference-image"
+        value: "Contrary.png"
+        supports:
+          - "male visual identity"
+          - "face, hair, beard, eyes, and skin"
+          - "violet facial markings and forehead motif"
+      - type: "user-correction"
+        value: "2026-08-17: Contrary appears between thirty and forty years old; remove the shield from the current reference scene"
+        supports:
+          - "apparent age"
+          - "shield omitted from default visual silhouette"
+      - type: "5etools"
+        value: "https://5e.tools/classes.html#school%20of%20divination_phb"
+        supports:
+          - "Diviner identity and future-seeing theme"
+      - type: "5etools"
+        value: "https://5e.tools/items.html#staff%20of%20the%20magi_xdmg"
+        supports:
+          - "Staff of the Magi properties and visual importance"
+      - type: "5etools"
+        value: "https://5e.tools/items.html#belt%20of%20storm%20giant%20strength_xdmg"
+        supports:
+          - "Strength 29 from the belt"
+      - type: "5etools"
+        value: "https://5e.tools/items.html#robe%20of%20the%20archmagi_xdmg"
+        supports:
+          - "rune-adorned Robe of the Archmagi"

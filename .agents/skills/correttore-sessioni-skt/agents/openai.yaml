@@ -1,0 +1,4 @@
+interface:
+  display_name: "Correttore sessioni SKT"
+  short_description: "Corregge in italiano le sessioni della campagna"
+  default_prompt: "Usa $correttore-sessioni-skt per correggere una sessione della campagna in italiano editoriale, preservando contenuti e struttura MDX."

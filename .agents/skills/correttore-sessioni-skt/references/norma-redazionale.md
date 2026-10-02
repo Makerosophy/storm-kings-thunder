@@ -8,7 +8,7 @@ Questa norma definisce le scelte editoriali del diario. Applicala con giudizio: 
 - Mantieni il presente narrativo e la terza persona adottati dal diario.
 - Alterna periodi brevi e articolati secondo il ritmo della scena. Nelle battaglie privilegia chiarezza spaziale e sequenziale.
 - Evita calchi dall’inglese, ridondanze, gerundi ambigui e catene eccessive di subordinate.
-- Elimina ripetizioni involontarie ravvicinate, ma conserva le riprese con funzione ritmica o enfatica.
+- Elimina le ripetizioni della stessa parola all’interno di una frase, preferendo una riformulazione naturale a un sinonimo forzato. Conserva le riprese intenzionali tra frasi quando hanno funzione ritmica o enfatica.
 - Chiarisci i pronomi solo quando il referente è dubbio. Non ripetere continuamente i nomi dei personaggi.
 
 ## Dialoghi

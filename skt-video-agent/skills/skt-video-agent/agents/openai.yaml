@@ -1,0 +1,4 @@
+interface:
+  display_name: "SKT Video Agent"
+  short_description: "Monta video SKT localmente dalle immagini della campagna"
+  default_prompt: "Usa $skt-video-agent per creare un video locale di una sessione Storm King's Thunder dalle immagini del blog."

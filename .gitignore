@@ -1,5 +1,7 @@
 # build output
 dist/
+# local generated media and exports
+output/
 # generated types/cache
 .astro/
 .vite/

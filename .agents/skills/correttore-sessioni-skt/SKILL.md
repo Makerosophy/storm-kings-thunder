@@ -6,6 +6,7 @@ description: Corregge e revisiona in italiano editoriale le cronache della campa
 # Correttore sessioni SKT
 
 Correggi le sessioni come un editor di narrativa italiana. Migliora la lingua senza cambiare ciò che è accaduto al tavolo, la caratterizzazione dei personaggi o le intenzioni dell’autore.
+In ogni livello di intervento, il testo finale deve essere molto scorrevole, elegante e piacevole da leggere. Ottieni questo risultato con formulazioni naturali, senza aggiungere enfasi artificiosa né alterare la voce dell’autore.
 
 ## Prima di intervenire
 
@@ -25,6 +26,7 @@ Correggi le sessioni come un editor di narrativa italiana. Migliora la lingua se
 
 - Mantieni il presente narrativo. Correggi i tempi verbali solo quando rompono la sequenza o il rapporto temporale.
 - Conserva focalizzazione, intensità, registro e grado di violenza del testo.
+- Elimina le ripetizioni della stessa parola all’interno di una frase, riformulando dove necessario anziché sostituire termini con sinonimi impropri. Se una ripetizione è indispensabile per un nome o termine canonico, oppure caratterizza intenzionalmente il parlato, conservala.
 - Non rendere generica la terminologia di D&D e non sostituire nomi propri o termini canonici senza evidenza.
 - Distingui un errore linguistico da una scelta stilistica legittima. Non normalizzare meccanicamente ogni frase.
 - Non introdurre informazioni tratte dal manuale dell’avventura che i personaggi non hanno scoperto.

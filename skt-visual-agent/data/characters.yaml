@@ -183,8 +183,8 @@ characters:
         - "Tymanther"
         - "Djerad Thymar"
     reference_images:
-      - inventory_id: "krjiv-in-battaglia-v2"
-        filename: "Krjiv in battaglia v2.png"
+      - inventory_id: "krjiv-v2"
+        filename: "../Krjiv_v2.png"
         role: "primary-visual-reference"
     visual_profile:
       apparent_age: "adult"
@@ -200,6 +200,8 @@ characters:
         - "heavy layered dark steel plate and scale armor"
         - "brown leather harnesses and straps"
         - "weathered black split cloak"
+        - "tattered ochre-gold cloth beneath the armor and at the waist"
+        - "layered spiked silver-steel pauldrons and bracers, waist chains, and a small skull ornament"
       primary_equipment:
         - "Flame Tongue greatsword acquired from Kartha-Kaya at the end of session 18"
         - "massive double-headed battleaxe used as his recurring weapon before session 18"
@@ -216,7 +218,9 @@ characters:
     known_temporary_forms: []
     continuity_rules:
       - "Preserve Krjiv's draconic head, silver-dragon scales, red eyes, horns, spines, tail, and massive silhouette."
-      - "The primary portrait predates the confirmed silver coloration: use it for Krjiv's face, muzzle, horns, spines, mane, build, armor, and anatomy, but never copy its black scale color."
+      - "Krjiv_v2.png is the user-approved primary identity reference, superseding Krjiv in battaglia v2.png. Its filename resolves relative to portrait_root, in the parent Personaggi directory."
+      - "Preserve the new portrait's silver-steel scales, long muzzle, swept-back horns, layered cheek spines, dark mane, armored silhouette, ochre cloth, and black cloak."
+      - "Use the portrait for character design only; render it in the active visual-style.yaml cinematic realism style. Do not import its ruined landscape or permanently burning sword into unrelated scenes."
       - "Do not depict him as a human, lizardfolk, winged dragon, or hornless humanoid."
       - "For scenes from session 18 onward, use the Flame Tongue greatsword as Krjiv's default current weapon unless the scene specifies another loadout."
       - "Show the Flame Tongue blade burning only when Krjiv has activated it or the current scene explicitly emphasizes its flames."
@@ -226,7 +230,7 @@ characters:
       - "The blog calls him a 'stregone-guerriero' but does not establish the exact tabletop subclass in the reviewed passages."
     sources:
       - type: "reference-image"
-        value: "krjiv-in-battaglia-v2"
+        value: "krjiv-v2"
         supports:
           - "visual_profile"
       - type: "blog"
@@ -262,6 +266,12 @@ characters:
         supports:
           - "scale color"
           - "dragon ancestry appearance"
+      - type: "user-confirmed-correction"
+        value: "2026-09-06: use Krjiv_v2.png as the new primary portrait for future images. Later user correction selects cinematic-realism-v2 as the global rendering style."
+        supports:
+          - "primary reference replacement"
+          - "visual_profile"
+          - "global cinematic realism style"
 
   - id: "kyle-greenwind"
     name: "Kyle Greenwind"

@@ -1,12 +1,24 @@
 schema_version: 1
-id: "skt-european-graphic-novel-v1"
-name: "Storm King's Thunder — European Graphic Novel"
+id: "skt-cinematic-realism-v2"
+name: "Storm King's Thunder — Cinematic Realism"
 setting: "Forgotten Realms"
 base_style: >-
-  Realistic fantasy graphic novel style, mature European comic book aesthetic,
-  clean inked linework, painterly digital rendering, desaturated cold natural
-  colors, strong black shadows, realistic anatomy, weathered textures, and
-  cinematic environmental storytelling.
+  Cinematic live-action fantasy realism, photorealistic character anatomy and
+  faces, highly detailed weathered metal, leather, cloth and scales, physically
+  credible material response, desaturated cold natural colors, deep atmospheric
+  shadows, volumetric light and restrained warm practical highlights. Grounded
+  dark-fantasy film still with natural depth and cinematic environmental storytelling.
+style_reference:
+  path: "skt-visual-agent/assets/style/cinematic-realism-v2.png"
+  relative_to: "campaign_root"
+  role: "rendering-style-only"
+  approved: "2026-09-06: user selected the first Krjiv refining-mill test image."
+style_rules:
+  - "Resolve style_reference.path against campaign_root and supply that image as a style-only reference alongside the visible characters' original portraits when the tool's reference limit permits. If all reference slots are needed for character identity, prioritize those portraits and convey this style through the prompt; never omit a visible character's reference to make room for the style image."
+  - "Apply this style to every character and scene by default, regardless of the rendering style of individual portraits."
+  - "Use the style reference for rendering, materials, lighting, and grading only; do not import its cast, poses, equipment, or setting."
+  - "Character portraits determine identity and equipment; the active global style determines rendering."
+  - "This supersedes European graphic novel v1, including inked linework and painterly comic shading."
 default_aspect_ratio: "16:9"
 composition:
   - "Make the central action immediately readable."
@@ -22,6 +34,8 @@ creature_rules:
   - "Keep different creature species visually distinct."
   - "Do not replace an identified creature with a generic humanoid or animal."
 negative_constraints:
+  - "no comic-book inking, crosshatching, cel shading, or graphic-novel rendering"
+  - "no painterly illustration finish"
   - "no anime or cartoon proportions"
   - "no glossy videogame rendering"
   - "no plastic skin"

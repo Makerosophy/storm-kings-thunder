@@ -28,8 +28,10 @@ pnpm-debug.log*
 .idea/
 .vscode/
 
-# local docs (Word source files, not for git)
-public/docs/
+# Local Word sources (outside Astro's public directory).
+/docs-local/
+# Keep legacy local documents ignored until they are moved.
+/public/docs/
 
 # local SKT visual-agent configuration and private assets
 skt-visual-agent/config/local.json

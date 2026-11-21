@@ -1,23 +1,9 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
+import { parseArgs } from 'node:util';
 import mammoth from 'mammoth';
 import TurndownService from 'turndown';
-
-function slugify(input) {
-  return String(input)
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
-
-function stripTags(html) {
-  return String(html).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
-}
 
 function stripMd(md) {
   return String(md)
@@ -40,20 +26,15 @@ function ensureDir(dirPath) {
   if (!fs.existsSync(dirPath)) fs.mkdirSync(dirPath, { recursive: true });
 }
 
-function uniquePath(baseDir, baseName, ext) {
-  let candidate = path.join(baseDir, `${baseName}${ext}`);
-  let i = 2;
-  while (fs.existsSync(candidate)) {
-    candidate = path.join(baseDir, `${baseName}-${i}${ext}`);
-    i += 1;
-  }
-  return candidate;
-}
-
 async function main() {
-  const docxPath = process.argv[2];
-  if (!docxPath) {
-    console.error('Usage: npm run convert:docx -- <path-to-file.docx>');
+  const { values, positionals } = parseArgs({
+    options: { start: { type: 'string' } },
+    allowPositionals: true,
+  });
+  const [docxPath] = positionals;
+  const start = Number(values.start);
+  if (positionals.length !== 1 || !/^\d+$/.test(values.start ?? '') || !Number.isSafeInteger(start) || start < 1) {
+    console.error('Usage: npm run convert:docx -- docs-local/<file.docx> --start <positive-integer>');
     process.exit(1);
   }
 
@@ -88,26 +69,42 @@ async function main() {
     sections.push({ title: 'Parte 1', body: markdown });
   }
 
+  if (!Number.isSafeInteger(start + (sections.length - 1))) {
+    console.error('The chapter range exceeds the largest safe integer.');
+    process.exit(1);
+  }
+
   const outputDir = path.join(process.cwd(), 'src', 'content', 'blog');
+  const ids = sections.map((_, index) => `${start + index}-avventura`);
+  for (const id of ids) {
+    for (const extension of ['.mdx', '.md']) {
+      const candidate = path.join(outputDir, `${id}${extension}`);
+      if (fs.lstatSync(candidate, { throwIfNoEntry: false })) {
+        console.error(`Cannot import DOCX: chapter ID ${id} is already occupied by ${path.relative(process.cwd(), candidate)}.`);
+        process.exit(1);
+      }
+    }
+  }
+
   ensureDir(outputDir);
 
   const now = new Date();
   const created = [];
 
   sections.forEach((section, index) => {
+    const title = section.title || `Parte ${index + 1}`;
     const plain = stripMd(section.body);
-    const description = plain.slice(0, 160) || section.title || `Parte ${index + 1}`;
-    const baseSlug = slugify(section.title || `parte-${index + 1}`);
-    const filePath = path.join(outputDir, `${baseSlug}.mdx`);
+    const description = plain.slice(0, 160) || title;
+    const filePath = path.join(outputDir, `${ids[index]}.mdx`);
 
     const frontmatter = `---\n` +
-      `title: ${yamlSingleQuote(section.title || `Parte ${index + 1}`)}\n` +
+      `title: ${yamlSingleQuote(title)}\n` +
       `description: ${yamlSingleQuote(description)}\n` +
       `pubDate: ${now.toISOString()}\n` +
       `---`;
 
-    const content = `${frontmatter}\n\n${section.body}\n`;
-    fs.writeFileSync(filePath, content, 'utf8');
+    const content = `${frontmatter}\n\n# ${title}\n\n${section.body}\n`;
+    fs.writeFileSync(filePath, content, { encoding: 'utf8', flag: 'wx' });
     created.push(path.relative(process.cwd(), filePath));
   });
 

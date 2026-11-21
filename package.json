@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "postbuild": "node scripts/prune-dist-images.mjs",
+    "postbuild": "node scripts/check-dist-docs.mjs && node scripts/prune-dist-images.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "convert:docx": "node scripts/docx-to-posts.mjs",

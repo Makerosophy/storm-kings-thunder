@@ -15,14 +15,17 @@ export async function GET(context) {
 		});
 	}
 
+	const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+	const site = new URL(base, context.site);
+
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
-		site: context.site,
+		site,
 		items: posts.map((post) => ({
 			...post.data,
 			description: excerptFromMarkdown(post.body ?? post.data.description),
-			link: `/blog/${post.id}/`,
+			link: new URL(`blog/${post.id}/`, site).href,
 		})),
 	});
 }

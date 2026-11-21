@@ -16,7 +16,8 @@ type Props = CollectionEntry<'blog'>;
 
 const post = Astro.props;
 const { Content, headings } = await render(post);
-const source = await fs.readFile(path.join(process.cwd(), 'src/content/blog', `${post.id}.mdx`), 'utf8');
+if (!post.filePath) throw new Error(`Missing source file path for blog entry "${post.id}"`);
+const source = await fs.readFile(path.resolve(post.filePath), 'utf8');
 const words = source.match(/\p{L}[\p{L}\p{N}'’:-]*/gu)?.length ?? 0;
 const readingMinutes = Math.max(1, Math.ceil(words / 220));
 const seoDescription = excerptFromMarkdown(source);

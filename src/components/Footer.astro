@@ -1,16 +1,12 @@
 ---
-const today = new Date();
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 
 <footer class="site-footer">
 	<div class="site-footer__inner">
 		<p class="site-footer__title">Storm King's Thunder</p>
-		<p class="site-footer__copy">
-			&copy; {today.getFullYear()} Una storia di giganti, viaggi e reliquie perdute.
-		</p>
 		<nav class="site-footer__links" aria-label="Link rapidi">
-			<a href={base}>Intro</a>
+			<a href={base}>Home</a>
 			<a href={`${base}blog/`}>Indice avventure</a>
 			<a href={`${base}about/`}>Risolutori</a>
 		</nav>
@@ -31,19 +27,18 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		justify-content: center;
 		gap: 0.5rem;
 		border-top: 1px solid rgba(var(--border), 0.55);
-		color: rgb(var(--gray));
+		color: var(--muted-moonlight);
 		text-align: center;
 	}
 
-	.site-footer__title,
-	.site-footer__copy {
+	.site-footer__title {
 		margin: 0;
 	}
 
 	.site-footer__title {
 		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
 		font-size: 1.1rem;
-		color: rgb(var(--black));
+		color: var(--moonlight);
 	}
 
 	.site-footer__links {
@@ -56,11 +51,11 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 	.site-footer__links a {
 		text-decoration: none;
-		color: rgb(var(--gray));
+		color: var(--muted-moonlight);
 	}
 
 	.site-footer__links a:hover {
-		color: var(--accent);
+		color: var(--gold);
 	}
 
 	@media (max-width: 720px) {

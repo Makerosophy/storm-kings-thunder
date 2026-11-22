@@ -14,6 +14,7 @@ npm run dev
 
 ### Contenuti
 - Post/avventure in `src/content/blog/*` (`.md` o `.mdx`); usare `N-avventura` come nome per includerli in home e archivio.
+- L’archivio cerca per numero, titolo o scena e collega direttamente alle scene corrispondenti. In lettura, l’indice laterale su desktop e il pulsante «Scene» su mobile indicano la posizione corrente.
 - Immagini pubbliche in `public/images/*`
 - Documenti Word sorgente in `docs-local/`, fuori da `public/` ed esclusi da Git.
   Per importarli: `npm run convert:docx -- "docs-local/nome-file.docx" --start 23`.

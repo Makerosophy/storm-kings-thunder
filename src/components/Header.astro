@@ -4,7 +4,7 @@ import HeaderLink from './HeaderLink.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const links = [
-	{ href: base, label: 'Intro' },
+	{ href: base, label: 'Home' },
 	{ href: `${base}blog/`, label: 'Avventure' },
 	{ href: `${base}about/`, label: 'Risolutori' },
 ];
@@ -67,7 +67,7 @@ const links = [
 		transform: translateY(0);
 	}
 
-	.site-header.is-hidden {
+	.site-header.is-hidden:not(:focus-within) {
 		transform: translateY(calc(-100% - 1rem));
 		opacity: 0;
 		pointer-events: none;
@@ -83,8 +83,8 @@ const links = [
 		gap: 1rem 1.5rem;
 		position: relative;
 		border: 1px solid rgba(var(--border), 0.45);
-		border-radius: 999px;
-		background: rgba(var(--storm-ivory-rgb), 0.86);
+		border-radius: var(--radius);
+		background: #13202cee;
 		box-shadow: var(--box-shadow);
 		backdrop-filter: blur(14px);
 		-webkit-backdrop-filter: blur(14px);
@@ -98,7 +98,7 @@ const links = [
 		display: inline-flex;
 		align-items: center;
 		gap: 0.85rem;
-		color: rgb(var(--black));
+		color: var(--moonlight);
 		text-decoration: none;
 		margin: 0;
 	}
@@ -107,11 +107,11 @@ const links = [
 		display: inline-grid;
 		place-items: center;
 		width: 2.85rem;
+		flex-shrink: 0;
 		height: 2.85rem;
 		border-radius: 50%;
-		background:
-			linear-gradient(180deg, rgba(var(--storm-mist-rgb), 1), rgba(var(--storm-night-rgb), 1));
-		color: rgb(var(--storm-ivory-rgb));
+		background: var(--gold);
+		color: var(--midnight);
 		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
 		font-size: 1.05rem;
 		font-weight: 700;
@@ -134,7 +134,7 @@ const links = [
 		font-size: 0.76rem;
 		letter-spacing: 0.08em;
 		text-transform: uppercase;
-		color: rgb(var(--gray));
+		color: var(--muted-moonlight);
 	}
 
 	.site-nav {
@@ -148,18 +148,18 @@ const links = [
 	.site-nav :global(a) {
 		padding: 0.8rem 1rem;
 		border-radius: 999px;
-		color: rgb(var(--black));
+		color: var(--moonlight);
 		text-decoration: none;
 		font-weight: 600;
 	}
 
 	.site-nav :global(a:hover) {
-		background: rgba(var(--storm-ivory-rgb), 0.8);
+		background: var(--midnight-raised);
 	}
 
 	.site-nav :global(a.active) {
-		background: rgba(var(--storm-mist-rgb), 0.14);
-		color: var(--accent-dark);
+		background: var(--midnight-raised);
+		color: var(--gold);
 		box-shadow: inset 0 0 0 1px rgba(var(--storm-mist-rgb), 0.16);
 	}
 
@@ -172,8 +172,8 @@ const links = [
 		padding: 0.8rem 1rem;
 		border-radius: 999px;
 		border: 1px solid rgba(var(--border), 0.42);
-		background: rgba(var(--storm-ivory-rgb), 0.94);
-		color: rgb(var(--black));
+		background: var(--midnight-raised);
+		color: var(--moonlight);
 		font: inherit;
 		font-weight: 700;
 		cursor: pointer;
@@ -185,8 +185,8 @@ const links = [
 	}
 
 	.site-menu[open] .site-menu__toggle {
-		background: rgba(var(--storm-mist-rgb), 0.14);
-		color: var(--accent-dark);
+		background: var(--midnight-raised);
+		color: var(--gold);
 	}
 
 	@media (max-width: 720px) {
@@ -197,7 +197,6 @@ const links = [
 		.site-header__inner {
 			width: min(100% - 1rem, var(--page-width));
 			padding: 0.75rem 0.85rem;
-			border-radius: 999px;
 			gap: 0.85rem;
 		}
 
@@ -243,7 +242,7 @@ const links = [
 			gap: 0.3rem;
 			border: 1px solid rgba(var(--border), 0.45);
 			border-radius: 24px;
-			background: rgba(var(--storm-ivory-rgb), 0.98);
+			background: var(--midnight-raised);
 			box-shadow: 0 16px 34px rgba(var(--storm-night-rgb), 0.18);
 		}
 
@@ -257,7 +256,7 @@ const links = [
 		.site-header__inner {
 			backdrop-filter: none;
 			-webkit-backdrop-filter: none;
-			background: rgba(var(--storm-ivory-rgb), 0.96);
+			background: #13202c;
 		}
 	}
 </style>
@@ -271,7 +270,7 @@ const links = [
 		let ticking = false;
 
 		const update = () => {
-			if (reduceMotion.matches) {
+			if (reduceMotion.matches || header.matches(':focus-within') || menu?.open) {
 				header.classList.remove('is-hidden');
 				lastY = window.scrollY;
 				ticking = false;
@@ -293,12 +292,6 @@ const links = [
 				header.classList.add('is-hidden');
 			} else if (delta < -6) {
 				header.classList.remove('is-hidden');
-			}
-
-			const shouldHide = header.classList.contains('is-hidden');
-
-			if (shouldHide && menu instanceof HTMLDetailsElement) {
-				menu.open = false;
 			}
 
 			lastY = currentY;

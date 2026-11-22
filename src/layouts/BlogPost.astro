@@ -1,10 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import BaseHead from '../components/BaseHead.astro';
+import ChapterIndex from '../components/ChapterIndex.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { chapterCovers } from '../utils/chapter-covers';
 
 type Heading = {
 	depth: number;
@@ -32,9 +34,8 @@ const firstSectionHeading = headings.find((heading) => heading.depth === 2);
 const promotedHeading = primaryHeading ?? firstSectionHeading;
 const narrativeTitle = promotedHeading?.text ?? title;
 const sectionHeadings = headings.filter(
-	(heading) => heading.slug !== promotedHeading?.slug && (heading.depth === 2 || heading.depth === 3)
+	(heading) => heading.slug !== promotedHeading?.slug && heading.depth <= 3
 );
-const visibleSectionHeadings = sectionHeadings.slice(0, 14);
 const contentClass = [
 	'article-content',
 	promotedHeading?.depth === 1 ? 'hide-first-h1' : '',
@@ -43,6 +44,11 @@ const contentClass = [
 	.filter(Boolean)
 	.join(' ');
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const chapterCover = postId && chapterCovers[postId];
+const nextCover = next && chapterCovers[next.id];
+const nextHeadings = next ? (await render(next)).headings : [];
+const nextTitle = nextHeadings.find(({ depth }) => depth === 1)?.text
+	?? nextHeadings.find(({ depth }) => depth === 2)?.text ?? next?.data.title;
 ---
 
 <html lang="it">
@@ -76,8 +82,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 				padding: 1.75rem;
 				border: 1px solid rgba(var(--border), 0.45);
 				border-radius: var(--radius);
-				background:
-					linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.92), rgba(var(--storm-mist-rgb), 0.24));
+				background: rgb(var(--paper));
 				box-shadow: var(--box-shadow);
 			}
 
@@ -115,21 +120,100 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 			}
 
 			.article-header {
-				padding: 0.5rem 0 0;
-				margin-bottom: 1.7rem;
-				text-align: center;
+				padding: clamp(1.3rem, 3vw, 2.5rem) 0;
+				margin-bottom: 1.35rem;
+				text-align: left;
+				border-bottom: 1px solid rgba(var(--border), 0.42);
 			}
 
 			.article-header h1 {
-				margin-bottom: 0.75rem;
+				margin-bottom: 0.9rem;
+				font-size: clamp(2.2rem, 1.6rem + 2.65vw, 4.2rem);
+				font-weight: 400;
+				letter-spacing: -0.035em;
+				text-wrap: balance;
+			}
+
+			.chapter-cover {
+				margin: 0 0 1.25rem;
+				overflow: hidden;
+				border-radius: var(--radius-sm);
+			}
+
+			.chapter-cover img {
+				display: block;
+				width: 100%;
+				height: clamp(11rem, 30vw, 23rem);
+				object-fit: cover;
+			}
+
+			.reading-grid {
+				display: grid;
+				gap: 1.2rem;
+			}
+
+			@media (min-width: 1024px) {
+				.reading-grid--indexed {
+					grid-template-columns: minmax(0, 1fr) minmax(16rem, 20rem);
+					gap: clamp(1.5rem, 3.5vw, 3.5rem);
+				}
+
+				.reading-grid--indexed > :global(.chapter-index) { grid-area: 1 / 2; }
+				.reading-grid--indexed > .prose { grid-area: 1 / 1; }
+			}
+
+			@media (max-width: 1023px) {
+				.reading-grid[data-index-ready] {
+					padding-inline-end: 2rem;
+					gap: 0;
+				}
+			}
+
+			.reading-grid--indexed > .prose {
+				width: min(100%, 43rem);
+				min-width: 0;
+			}
+
+			.article-content {
+				font-family: Georgia, serif;
+				font-size: clamp(1.08rem, 1rem + 0.35vw, 1.23rem);
+				line-height: 1.8;
+				overflow-wrap: anywhere;
+			}
+
+			.article-content :global(h1),
+			.article-content :global(h2) {
+				margin-top: clamp(2.4rem, 5vw, 4rem);
+				padding-top: clamp(0.9rem, 2vw, 1.35rem);
+				border-top: 1px solid rgba(var(--border), 0.48);
+				letter-spacing: -0.025em;
+			}
+
+			.article-content :global(h3) {
+				margin-top: 2rem;
+				color: var(--accent-dark);
+			}
+
+			.article-content :global(figure) {
+				margin-block: clamp(1.6rem, 4vw, 2.8rem);
+			}
+
+			.article-content :global(img) {
+				border-radius: var(--radius-sm);
+			}
+
+			.article-content :global(figcaption) {
+				margin-inline: auto;
+				max-width: 55ch;
+				font-family: Atkinson, sans-serif;
+				line-height: 1.45;
 			}
 
 			.article-kicker,
 			.article-meta {
 				display: flex;
 				flex-wrap: wrap;
-				justify-content: center;
-				gap: 0.6rem 0.9rem;
+				gap: 0.35rem 0.9rem;
 				margin: 0;
 			}
 
@@ -187,63 +271,17 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 				display: none;
 			}
 
-			.article-toc {
-				margin: 0 0 2.2rem;
-				padding: 1rem 1.1rem;
-				border: 1px solid rgba(var(--border), 0.42);
-				border-radius: var(--radius-sm);
-				background: rgba(var(--storm-ivory-rgb), 0.7);
+			.article-content :global(.section-anchor) {
+				scroll-margin-top: calc(var(--header-height) + 1.25rem);
 			}
 
-			.article-toc summary {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
-				gap: 1rem;
-				color: rgb(var(--black));
-				cursor: pointer;
-				font-weight: 700;
-				list-style: none;
+			.article-content :global(.section-anchor) {
+				display: block;
 			}
 
-			.article-toc summary::-webkit-details-marker {
-				display: none;
-			}
-
-			.article-toc summary::after {
-				content: "+";
-				display: inline-grid;
-				place-items: center;
-				width: 1.65rem;
-				height: 1.65rem;
-				border-radius: 50%;
-				background: rgba(var(--storm-mist-rgb), 0.18);
-				color: var(--accent-dark);
-			}
-
-			.article-toc[open] summary::after {
-				content: "-";
-			}
-
-			.article-toc ol {
-				list-style: none;
-				margin: 0.9rem 0 0;
-				padding: 0;
-				display: grid;
-				gap: 0.5rem;
-			}
-
-			.article-toc li.depth-3 {
-				padding-left: 1rem;
-				font-size: 0.95rem;
-			}
-
-			.article-toc a {
-				color: rgb(var(--gray-dark));
-				text-decoration: none;
-			}
-
-			.article-toc a:hover {
+			.article-content :global(h1[id]:target),
+			.article-content :global(h2[id]:target),
+			.article-content :global(h3[id]:target) {
 				color: var(--accent-dark);
 			}
 
@@ -299,11 +337,8 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 				content: "#";
 			}
 
-			.article-content :global(img) {
-				cursor: zoom-in;
-			}
-
 			.article-content :global(img[role="button"]) {
+				cursor: zoom-in;
 				transition:
 					transform 0.2s ease,
 					box-shadow 0.2s ease;
@@ -375,37 +410,56 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 			.post-nav {
 				display: grid;
-				grid-template-columns: repeat(3, minmax(0, 1fr));
-				gap: 0.85rem;
-				margin-top: 3rem;
+				gap: 1rem;
+				margin-top: clamp(2.5rem, 6vw, 4.5rem);
+				padding-top: 1.25rem;
+				border-top: 1px solid rgba(var(--border), 0.48);
 			}
 
-			.post-nav a,
-			.post-nav span {
-				min-height: 4.7rem;
-				padding: 1rem 1.1rem;
-				border-radius: var(--radius-sm);
-				border: 1px solid rgba(var(--border), 0.42);
-				background: rgba(var(--storm-ivory-rgb), 0.72);
-				text-decoration: none;
-				color: rgb(var(--black));
-				display: flex;
+			.post-nav .next {
+				display: grid;
+				grid-template-columns: minmax(0, 1fr) auto;
 				align-items: center;
-				justify-content: center;
-				text-align: center;
+				gap: 0.8rem;
+				padding: 0.85rem clamp(0.75rem, 2vw, 1.2rem);
+				border: 1px solid var(--night-line);
+				border-radius: var(--radius-sm);
+				background: var(--midnight-raised);
+				color: var(--moonlight);
+				text-decoration: none;
 			}
 
-			.post-nav span {
-				opacity: 0.4;
+			.post-nav .next:hover { border-color: var(--gold); }
+			.post-nav .next:focus-visible { outline-color: var(--gold); outline-offset: -4px; }
+			.post-nav .next:hover strong { text-decoration: underline; }
+			.post-nav .next .eyebrow { display: block; color: var(--gold); }
+			.post-nav .next strong {
+				display: block;
+				font: 400 clamp(1.25rem, 1rem + 1.4vw, 2rem)/1.15 var(--display-font);
+				overflow-wrap: anywhere;
 			}
 
-			.post-nav a:hover {
-				color: var(--accent-dark);
-				transform: translateY(-2px);
+			.post-nav .next img {
+				width: clamp(3.6rem, 12vw, 9rem);
+				aspect-ratio: 4 / 3;
+				object-fit: cover;
+				margin: 0;
+				border-radius: 0.35rem;
 			}
 
-			.post-nav .index {
-				font-weight: 700;
+			.post-nav .secondary-links {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 0.35rem 1.25rem;
+				font-size: 0.98rem;
+			}
+
+			@media (pointer: coarse) {
+				.article-content :global(.section-copy-link) {
+					width: 2.75rem;
+					height: 2.75rem;
+					opacity: 1;
+				}
 			}
 
 			@media (max-width: 720px) {
@@ -415,6 +469,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 
 				.article-shell {
 					padding: 1rem;
+				}
+
+				.prose {
+					width: 100%;
 				}
 
 				.hero-grid.two {
@@ -454,14 +512,6 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 					border-bottom: 1px solid rgba(var(--border), 0.42);
 					border-radius: 0;
 				}
-
-				.article-toc {
-					margin-bottom: 1.5rem;
-				}
-
-				.post-nav {
-					grid-template-columns: 1fr;
-				}
 			}
 		</style>
 	</head>
@@ -475,6 +525,11 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		<Header />
 		<main id="content" tabindex="-1" class="container article-page">
 			<article class="article-shell">
+				{chapterCover && heroList.length === 0 && (
+					<div class="chapter-cover">
+						<img src={`${base}images/sessions/${chapterCover}`} alt="" decoding="auto" fetchpriority="high" />
+					</div>
+				)}
 				{heroList.length > 0 && (
 					<div class="hero-image">
 						<div class={`hero-grid ${heroList.length >= 2 ? 'two' : ''}`}>
@@ -484,15 +539,16 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 						</div>
 					</div>
 				)}
+				<div class:list={['reading-grid', { 'reading-grid--indexed': sectionHeadings.length > 0 }]}>
+				{sectionHeadings.length > 0 && <ChapterIndex headings={sectionHeadings} />}
 				<div class="prose">
 					<header class="article-header">
-						<p class="article-kicker"><span class="eyebrow">Capitolo di campagna</span></p>
+						{isBlogPost && <p class="article-kicker"><span class="eyebrow">{title}</span></p>}
 						<h1>{narrativeTitle}</h1>
 						{isBlogPost && (
 							<p class="article-meta">
-								<span>{title}</span>
-								{readingMinutes && <span>{readingMinutes} min di lettura</span>}
-								<span>{sectionHeadings.length} scene</span>
+									{readingMinutes && <span>{readingMinutes} min di lettura</span>}
+								<span>{sectionHeadings.length} {sectionHeadings.length === 1 ? 'scena' : 'scene'}</span>
 							</p>
 						)}
 					</header>
@@ -504,7 +560,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 									<span class="nav-title">← {prev.data.title}</span>
 								</a>
 							) : <span aria-hidden="true"></span>}
-							<a class="index" href={`${base}blog/`}>Indice</a>
+							<a class="index" href={`${base}blog/`}>Tutte le avventure</a>
 							{next ? (
 								<a class="next" href={`${base}blog/${next.id}/`} aria-label={`Capitolo successivo: ${next.data.title}`}>
 									<span class="nav-label">Successiva →</span>
@@ -513,28 +569,29 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 							) : <span aria-hidden="true"></span>}
 						</nav>
 					)}
-					{visibleSectionHeadings.length > 1 && (
-						<details class="article-toc" open>
-							<summary>In questo capitolo</summary>
-							<ol>
-								{visibleSectionHeadings.map((heading) => (
-									<li class={`depth-${heading.depth}`}>
-										<a href={`#${heading.slug}`}>{heading.text}</a>
-									</li>
-								))}
-							</ol>
-						</details>
-					)}
 					<div class={contentClass}>
 						<slot />
 					</div>
 					{isBlogPost && (
 						<nav class="post-nav" aria-label="Navigazione tra avventure">
-							{prev ? <a class="prev" href={`${base}blog/${prev.id}/`}>← {prev.data.title}</a> : <span>Avventura precedente</span>}
-							<a class="index" href={`${base}blog/`}>Indice</a>
-							{next ? <a class="next" href={`${base}blog/${next.id}/`}>{next.data.title} →</a> : <span>Avventura successiva</span>}
+							{next && (
+								<a class="next" href={`${base}blog/${next.id}/`}>
+									<span>
+										<span class="eyebrow">Continua a leggere · Avventura {parseInt(next.id)} →</span>
+										<strong>{nextTitle}</strong>
+									</span>
+									{nextCover
+										? <img src={`${base}images/sessions/${nextCover}`} alt="" loading="lazy" decoding="async" />
+										: next.data.heroImage && <Image src={next.data.heroImage} width={288} height={216} alt="" loading="lazy" />}
+								</a>
+							)}
+							<div class="secondary-links">
+								{prev && <a class="prev" href={`${base}blog/${prev.id}/`}>← Avventura {parseInt(prev.id)}</a>}
+								<a class="index" href={`${base}blog/`}>Tutte le avventure</a>
+							</div>
 						</nav>
 					)}
+				</div>
 				</div>
 			</article>
 		</main>
@@ -551,24 +608,20 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 		{isBlogPost && (
 			<script is:inline>
 				const progress = document.querySelector('[data-reading-progress]');
-				const toc = document.querySelector('.article-toc');
 				const viewer = document.querySelector('[data-image-viewer]');
 				const viewerImage = document.querySelector('[data-image-viewer-image]');
 				const viewerCaption = document.querySelector('[data-image-viewer-caption]');
 				const viewerClose = document.querySelector('[data-image-viewer-close]');
 				const scrollToHash = () => {
-					const id = decodeURIComponent(window.location.hash.slice(1));
+					let id = window.location.hash.slice(1);
+					try { id = decodeURIComponent(id); } catch { return; }
 					if (!id) return;
 
 					const target = document.getElementById(id);
 					if (target) {
-						target.scrollIntoView({ block: 'start' });
+						target.scrollIntoView({ block: 'start', behavior: 'instant' });
 					}
 				};
-
-				if (toc instanceof HTMLDetailsElement && window.matchMedia('(max-width: 720px)').matches) {
-					toc.open = false;
-				}
 
 				document.querySelectorAll('.article-content h2[id], .article-content h3[id]').forEach((heading) => {
 					if (!(heading instanceof HTMLElement) || heading.querySelector('.section-copy-link')) return;
@@ -586,9 +639,10 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 						window.history.replaceState(null, '', url);
 
 						try {
-							await navigator.clipboard?.writeText(url.href);
+							await navigator.clipboard.writeText(url.href);
 						} catch {
-							// Updating the URL still gives the reader a copyable deep link.
+							// The section URL is still available in the address bar.
+							return;
 						}
 
 						button.dataset.copied = 'true';
@@ -625,7 +679,9 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 				}
 
 				if (
-					viewer instanceof HTMLDialogElement
+					typeof HTMLDialogElement !== 'undefined'
+					&& viewer instanceof HTMLDialogElement
+					&& typeof viewer.showModal === 'function'
 					&& viewerImage instanceof HTMLImageElement
 					&& viewerCaption instanceof HTMLElement
 					&& viewerClose instanceof HTMLButtonElement
@@ -643,11 +699,7 @@ const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 						viewerImage.alt = caption;
 						viewerCaption.textContent = caption;
 
-						if (typeof viewer.showModal === 'function') {
-							viewer.showModal();
-						} else {
-							viewer.setAttribute('open', '');
-						}
+						viewer.showModal();
 
 						viewerClose.focus();
 					};

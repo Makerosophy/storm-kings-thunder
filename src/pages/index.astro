@@ -1,53 +1,33 @@
 ---
+import { Image } from 'astro:assets';
+import Nightstone from '../../public/images/home/1_Nightstone.webp';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 import { getCollection, render } from 'astro:content';
 import RisolutoriOg from '../assets/risolutori-social.webp';
-import fs from 'node:fs';
-import path from 'node:path';
+import { chapterCovers } from '../utils/chapter-covers';
 
 const posts = (await getCollection('blog'))
 	.filter(({ id }) => /^\d+-avventura$/.test(id))
 	.sort((a, b) => parseInt(a.id) - parseInt(b.id));
 
-const sessionsBase = new URL('../../public/images/sessions/', import.meta.url).pathname;
 const base = import.meta.env.BASE_URL.replace(/\/?$/, '/');
-const totalPosts = posts.length;
 const firstPost = posts[0];
 const latestPost = posts.at(-1);
 
-function findThumb(num) {
-	const dir = path.join(sessionsBase, String(num).padStart(3, '0'));
-	if (!fs.existsSync(dir)) return '';
-	const file = (fs
-		.readdirSync(dir)
-		.filter((f) => /\.(png|jpe?g|webp)$/i.test(f))
-		.sort((a, b) => {
-			const aWebp = a.endsWith('.webp') ? 0 : 1;
-			const bWebp = b.endsWith('.webp') ? 0 : 1;
-			return aWebp - bWebp || a.localeCompare(b);
-		})[0]) || '';
-	return file ? `${base}images/sessions/${String(num).padStart(3, '0')}/${encodeURI(file)}` : '';
-}
-
 const previews = await Promise.all(
-	posts.map(async (p) => {
+	posts.slice(-3).reverse().map(async (p) => {
 		const { headings } = await render(p);
-		const sections = headings
-			.filter((h) => (h.depth === 2 || h.depth === 3) && h.text.trim() !== p.data.title.trim())
-			.map((h) => h.text)
-			.slice(0, 3);
 		const dateFromDesc = (p.data.description?.match(/\b\d{2}\/\d{2}\/\d{4}\b/) || [])[0];
 		const dateLabel = dateFromDesc || new Date(p.data.pubDate).toLocaleDateString('it-IT');
 		return {
 			id: p.id,
-			title: p.data.title,
+			title: headings.find(({ depth }) => depth === 1)?.text ?? p.data.title,
 			num: parseInt(p.id),
 			dateLabel,
-			sections,
-			thumb: findThumb(parseInt(p.id)),
+			thumb: chapterCovers[p.id] ? `${base}images/sessions/${chapterCovers[p.id]}` : '',
 		};
 	})
 );
@@ -61,514 +41,184 @@ const previews = await Promise.all(
 	<body>
 		<Header />
 		<main id="content" tabindex="-1" class="container home-page">
-			<section class="hero">
+			<section class="hero" aria-labelledby="campaign-title">
 				<div class="hero-body">
-					<p class="eyebrow">Diario di campagna • D&amp;D 5e</p>
-					<h1>Storm King's Thunder</h1>
-					<p class="hero-lead">
-						Il diario illustrato dei Risolutori, dalla caduta su Nightstone fino alle domande rivolte all’Occhio del Padre di Tutto.
-					</p>
-					<p class="hero-copy">
-						Una cronaca di campagna pensata per essere letta come una storia seriale: capitoli ordinati, scene navigabili e immagini dei momenti chiave.
-					</p>
+					<p class="eyebrow">Il diario dei Risolutori</p>
+					<h1 id="campaign-title">Storm King’s <span>Thunder</span></h1>
+					<p class="hero-lead">Una cronaca illustrata della campagna, dal primo incontro a Nightstone alla crisi dei giganti.</p>
 					<div class="hero-actions">
-						{firstPost && <a class="button" href={`${base}blog/${firstPost.id}/`}>Inizia dal primo capitolo</a>}
-						{latestPost && <a class="button secondary" href={`${base}blog/${latestPost.id}/`}>Leggi l’ultimo capitolo</a>}
-						<a class="button secondary" href={`${base}blog/`}>Sfoglia l’indice completo</a>
+						{firstPost && <a class="button" href={`${base}blog/${firstPost.id}/`}>Inizia da Nightstone →</a>}
+						{latestPost && <a class="button secondary" href={`${base}blog/${latestPost.id}/`}>Leggi l’ultima avventura</a>}
 					</div>
-					<ul class="hero-stats" aria-label="Panoramica rapida della campagna">
-						<li><strong>{totalPosts}</strong><span>avventure</span></li>
-						<li><strong>4</strong><span>protagonisti iniziali</span></li>
-						<li><strong>1</strong><span>diario illustrato</span></li>
-					</ul>
 				</div>
 				<div class="hero-media">
-					<img
-						class="hero-image"
-						src={`${base}images/home/1_Nightstone.webp`}
-						alt="Nightstone"
-						width="1024"
-						height="1024"
-						decoding="async"
-						fetchpriority="high"
-					/>
-					<div class="hero-panel">
-						<p class="eyebrow">Punto di partenza</p>
-						<h2>Nightstone</h2>
-						<p>Il viaggio inizia ai margini della Frontiera Selvaggia, in un villaggio ferito dai giganti e da un mistero lasciato nel cratere della sua piazza.</p>
-						<a class="hero-panel-link" href={`${base}about/`}>Chi sono i Risolutori</a>
-					</div>
+					<Image class="hero-image" src={Nightstone} alt="" widths={[480, 768, 1024]}
+						sizes="(max-width: 600px) 100vw, (max-width: 1280px) 96vw, 1280px" loading="eager" decoding="auto" fetchpriority="high" />
 				</div>
 			</section>
 
-			<section class="prologue">
-				<div class="prologue-date">
-					<span>30 di Ches 1486</span>
+			<section class="home-section" aria-labelledby="latest-adventures">
+				<div class="home-section-heading">
+					<h2 id="latest-adventures">Ultime avventure</h2>
+					<a href={`${base}blog/`}>Tutte le avventure →</a>
 				</div>
-				<div class="prologue-copy">
-					<p>
-						Sono ormai due mesi che gli attacchi dei giganti si fanno sempre più pressanti in quella che viene comunemente definita la Frontiera Selvaggia. Le varie fazioni si stanno organizzando per capire il motivo di tali movimentazioni e, se possibile, trovare un modo di debellare la minaccia.
-					</p>
-					<p>
-						Huldur Winedale, Krjiv Linxakasèndalor, Aerendir Frostwood e Kyle Greenwich si incontrano al di fuori di Nightstone, cittadina a est della strada che collega Waterdeep e Daggerford. Da quel momento, il Nord smette di essere solo una mappa.
-					</p>
-				</div>
-			</section>
-
-			<section class="home-section">
-				<div class="section-copy">
-					<p class="eyebrow">Archivio sessioni</p>
-					<h2>La campagna, capitolo dopo capitolo</h2>
-					<p>Dalle prime tracce lasciate dai giganti fino ai segreti custoditi nei luoghi più antichi del Nord.</p>
-				</div>
-				{latestPost && (
-					<a class="latest-link" href={`${base}blog/${latestPost.id}/`}>
-						<span>Ultimo aggiornamento</span>
-						<strong>{latestPost.data.title}</strong>
-					</a>
-				)}
-			</section>
-
-			<div class="carousel" role="region" aria-label="Avventure (scorri orizzontalmente)" data-carousel>
-				<button class="nav prev" type="button" aria-label="Precedenti" data-direction="-1">←</button>
-				<div class="carousel-track" tabindex="0" aria-label="Elenco avventure">
+				<div class="adventure-grid">
 					{previews.map((post) => (
-						<a class="card" href={`${base}blog/${post.id}/`} aria-label={`Avventura ${post.num}: ${post.title}`}>
+						<a class:list={['card', { 'has-image': post.thumb }]} href={`${base}blog/${post.id}/`}>
 							{post.thumb && <img class="thumb" src={post.thumb} alt="" loading="lazy" decoding="async" />}
-							<span class="num">{post.num}° Avventura</span>
-							<span class="title">{post.title}</span>
-							<strong class="date">{post.dateLabel}</strong>
-							{post.sections.length > 0 && (
-								<ul class="sections">
-									{post.sections.map((s) => (
-										<li>{s}</li>
-									))}
-								</ul>
-							)}
+							<div class="card-copy">
+								<span class="num">Avventura {post.num}</span>
+								<h3 class="title">{post.title}</h3>
+								<span class="date">{post.dateLabel}</span>
+							</div>
 						</a>
 					))}
 				</div>
-				<button class="nav next" type="button" aria-label="Successive" data-direction="1">→</button>
-			</div>
+			</section>
+
+			<section class="prologue" aria-labelledby="nightstone-title">
+				<div>
+					<p class="prologue-date">30 Ches 1486</p>
+					<h2 id="nightstone-title">Nightstone</h2>
+				</div>
+				<div class="prologue-copy">
+					<p>Da due mesi i giganti attaccano la Frontiera Selvaggia. Fuori da Nightstone, Huldur, Krjiv, Aerendir e Kyle si incontrano per la prima volta.</p>
+					<a href={`${base}about/`}>Conosci i Risolutori →</a>
+				</div>
+			</section>
 		</main>
 		<style>
-			.home-page {
-				padding: 2.2rem 0 4rem;
-			}
+			.home-page { padding: clamp(0.7rem, 3vw, 2rem) 0 4rem; }
 
 			.hero {
 				display: grid;
-				grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-				align-items: center;
-				gap: 2rem;
-				padding: 2rem;
-				border: 1px solid rgba(var(--border), 0.45);
+				isolation: isolate;
+				min-height: clamp(31rem, 55vw, 44rem);
+				border: 1px solid var(--night-line);
 				border-radius: var(--radius);
-				background:
-					linear-gradient(135deg, rgba(var(--storm-ivory-rgb), 0.82), rgba(var(--storm-mist-rgb), 0.26)),
-					radial-gradient(circle at top right, rgba(var(--storm-sea-rgb), 0.2), transparent 34%);
-				box-shadow: var(--box-shadow);
+				overflow: hidden;
+				background: var(--midnight);
+				box-shadow: 0 24px 70px #080f18a0;
 			}
 
-			.hero-body {
-				min-width: 0;
-			}
-
-			.hero-body h1 {
-				margin-bottom: 0.75rem;
-			}
-
-			.hero-lead {
-				font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
-				line-height: 1.7;
-				color: rgb(var(--black));
-				max-width: 32rem;
-			}
-
-			.hero-copy {
-				max-width: 34rem;
-			}
-
-			.hero-actions {
-				display: flex;
-				flex-wrap: wrap;
-				gap: 0.85rem;
-				margin-top: 1.75rem;
-			}
-
-			.hero-stats {
-				list-style: none;
-				margin: 1.5rem 0 0;
-				padding: 0;
-				display: grid;
-				grid-template-columns: repeat(3, minmax(0, 1fr));
-				gap: 0.85rem;
-			}
-
-			.hero-stats li {
-				padding: 1rem;
-				border: 1px solid rgba(var(--border), 0.35);
-				border-radius: var(--radius-sm);
-				background: rgba(var(--storm-ivory-rgb), 0.6);
-			}
-
-			.hero-stats strong,
-			.hero-stats span {
-				display: block;
-			}
-
-			.hero-stats strong {
-				font-size: 1.5rem;
-				color: rgb(var(--black));
-			}
-
-			.hero-stats span {
-				font-size: 0.92rem;
-				color: rgb(var(--gray));
-			}
+			.hero-body, .hero-media { grid-area: 1 / 1; }
 
 			.hero-media {
-				display: grid;
-				gap: 1rem;
+				position: relative;
+				margin: 0;
+				align-self: stretch;
+				z-index: -1;
+			}
+
+			.hero-media::after {
+				position: absolute;
+				inset: 0;
+				content: "";
+				background: linear-gradient(90deg, #0b1420 2%, #0b1420ee 28%, #0b1420b8 45%, #0b142000 77%),
+					linear-gradient(0deg, #0b1420e0, transparent 32%);
 			}
 
 			.hero-image {
+				position: absolute;
+				inset: 0;
 				width: 100%;
-				display: block;
-				aspect-ratio: 5 / 4;
+				height: 100%;
 				object-fit: cover;
-				border-radius: calc(var(--radius) - 4px);
-				box-shadow: var(--box-shadow);
+				object-position: 65% 29%;
+				border-radius: 0;
 			}
 
-			.hero-panel {
-				padding: 1.25rem;
-				border: 1px solid rgba(var(--border), 0.4);
-				border-radius: var(--radius-sm);
-				background: rgba(var(--storm-ivory-rgb), 0.92);
+			.hero-body {
+				align-self: center;
+				padding: clamp(1.5rem, 6vw, 5rem);
+				min-width: 0;
+				max-width: 54rem;
 			}
 
-			.hero-panel h2 {
-				margin-bottom: 0.5rem;
+			.hero-body h1 {
+				color: var(--moonlight);
+				font-size: clamp(3rem, 2.2rem + 4.7vw, 6.7rem);
+				font-weight: 400;
+				letter-spacing: -0.055em;
+				line-height: 0.94;
+				margin-bottom: 1.35rem;
 			}
 
-			.hero-panel p {
-				margin-bottom: 0.8rem;
-			}
+			.hero-body h1 span { display: block; color: var(--gold); }
+			.hero-body .eyebrow { color: var(--gold); }
+			.hero-lead { max-width: 31rem; color: var(--moonlight); font-size: clamp(1.05rem, 1rem + 0.4vw, 1.3rem); }
+			.hero-actions { display: flex; flex-wrap: wrap; gap: 0.65rem; }
+			.hero-actions .button { min-height: 2.9rem; }
+			.hero-actions .secondary { background: #101c29de; border-color: var(--night-line); color: var(--moonlight); }
+			.hero-actions .secondary:hover { background: #27394b; }
 
-			.hero-panel-link {
-				font-weight: 700;
+			.home-section { padding-top: clamp(2.8rem, 6vw, 5rem); }
+			.home-section-heading {
+				display: flex;
+				align-items: baseline;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 0.4rem 1rem;
+				margin-bottom: 1.2rem;
+			}
+			.home-section-heading h2, .home-section-heading a { color: var(--moonlight); }
+			.home-section-heading a:hover { color: var(--gold); }
+
+			.adventure-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+			.card {
+				display: grid;
+				grid-template-rows: auto 1fr;
+				min-width: 0;
+				border: 1px solid var(--night-line);
+				border-radius: var(--radius);
+				overflow: hidden;
 				text-decoration: none;
+				background: var(--midnight-raised);
+				color: var(--moonlight);
 			}
+			.card:hover, .card:focus-visible { color: var(--moonlight); border-color: var(--gold); }
+			.card .thumb { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 0; }
+			.card-copy { display: grid; align-content: start; gap: 0.55rem; padding: clamp(1rem, 2vw, 1.5rem); }
+			.card .num { color: var(--gold); font-weight: 700; font-size: 0.85rem; }
+			.card .title { color: inherit; margin: 0; font-size: clamp(1.35rem, 1.1rem + 0.8vw, 2rem); }
+			.card .date { color: var(--muted-moonlight); font-size: 0.95rem; }
 
 			.prologue {
 				display: grid;
-				grid-template-columns: minmax(10rem, 0.34fr) minmax(0, 1fr);
-				gap: 2rem;
-				padding: 2.2rem 0 0.5rem;
-				align-items: start;
+				grid-template-columns: minmax(10rem, 0.35fr) minmax(0, 1fr);
+				gap: 1.2rem 2rem;
+				margin-top: clamp(2.8rem, 6vw, 5rem);
+				padding: clamp(1.2rem, 4vw, 2.75rem);
+				border-top: 1px solid var(--night-line);
+				color: var(--moonlight);
+			}
+			.prologue h2 { color: var(--moonlight); }
+			.prologue-date { color: var(--gold); font-weight: 700; }
+			.prologue-copy { max-width: 66ch; }
+			.prologue-copy p:last-of-type { margin-bottom: 0.65rem; }
+			.prologue-copy a { color: var(--gold); }
+
+			@media (max-width: 850px) {
+				.adventure-grid { grid-template-columns: 1fr; }
+				.card.has-image { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr); grid-template-rows: auto; }
+				.card .thumb { height: 100%; }
 			}
 
-			.prologue-date {
-				position: sticky;
-				top: calc(var(--header-height) + 1rem);
-				color: var(--accent-dark);
-				font-weight: 700;
+			@media (max-width: 600px) {
+				.hero { min-height: 0; }
+				.hero-body, .hero-media { grid-area: auto; }
+				.hero-media { order: -1; aspect-ratio: 16 / 10; }
+				.hero-media::after { background: linear-gradient(0deg, var(--midnight), transparent 40%); }
+				.hero-body { padding-top: 0.5rem; }
+				.hero-actions { display: grid; }
+				.prologue { grid-template-columns: 1fr; padding-inline: 0.25rem; }
 			}
 
-			.prologue-date span {
-				display: inline-block;
-				padding-top: 0.2rem;
-				border-top: 1px solid currentColor;
-			}
-
-			.prologue-copy {
-				max-width: 48rem;
-				font-size: clamp(1.05rem, 1rem + 0.28vw, 1.24rem);
-				line-height: 1.78;
-			}
-
-			.prologue-copy p:last-child {
-				margin-bottom: 0;
-			}
-
-			.home-section {
-				display: flex;
-				align-items: end;
-				justify-content: space-between;
-				gap: 1.25rem;
-				padding: 2.5rem 0 1rem;
-			}
-
-			.section-copy {
-				max-width: 40rem;
-			}
-
-			.latest-link {
-				display: grid;
-				gap: 0.2rem;
-				min-width: min(22rem, 100%);
-				padding: 1rem 1.1rem;
-				border: 1px solid rgba(var(--border), 0.45);
-				border-radius: var(--radius-sm);
-				background: rgba(var(--storm-ivory-rgb), 0.72);
-				color: rgb(var(--black));
-				text-decoration: none;
-			}
-
-			.latest-link span {
-				color: var(--accent-dark);
-				font-size: 0.78rem;
-				font-weight: 700;
-				letter-spacing: 0.14em;
-				text-transform: uppercase;
-			}
-
-			.latest-link strong {
-				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
-				font-size: 1.35rem;
-				line-height: 1.12;
-			}
-
-			.latest-link:hover {
-				color: var(--accent-dark);
-				transform: translateY(-2px);
-			}
-
-			.carousel {
-				position: relative;
-			}
-
-			@supports (content-visibility: auto) {
-				.hero,
-				.home-section,
-				.carousel {
-					content-visibility: auto;
-					contain-intrinsic-size: 1px 900px;
-				}
-			}
-
-			.carousel .nav {
-				position: absolute;
-				top: 50%;
-				transform: translateY(-50%);
-				width: 3rem;
-				height: 3rem;
-				border: 1px solid rgba(var(--border), 0.55);
-				border-radius: 50%;
-				background: rgba(var(--storm-ivory-rgb), 0.92);
-				color: rgb(var(--black));
-				cursor: pointer;
-				box-shadow: var(--box-shadow);
-				z-index: 2;
-			}
-
-			.carousel .nav:disabled {
-				opacity: 0.38;
-				cursor: not-allowed;
-				box-shadow: none;
-			}
-
-			.carousel .nav.prev {
-				left: 0.3rem;
-			}
-
-			.carousel .nav.next {
-				right: 0.3rem;
-			}
-
-			.carousel-track {
-				display: flex;
-				gap: 1rem;
-				padding: 0.5rem 3.8rem 1rem;
-				overflow-x: auto;
-				scroll-snap-type: x mandatory;
-				-webkit-overflow-scrolling: touch;
-				scrollbar-width: none;
-			}
-
-			.carousel-track::-webkit-scrollbar {
-				display: none;
-			}
-
-			.card {
-				display: flex;
-				flex-direction: column;
-				gap: 0.65rem;
-				min-width: min(22rem, 78vw);
-				padding: 1rem;
-				border: 1px solid rgba(var(--border), 0.45);
-				border-radius: calc(var(--radius) - 6px);
-				text-decoration: none;
-				color: inherit;
-				scroll-snap-align: start;
-				background:
-					linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.92), rgba(var(--storm-mist-rgb), 0.24));
-				box-shadow: var(--box-shadow);
-			}
-
-			.card:hover {
-				transform: translateY(-4px);
-			}
-
-			.card .thumb {
-				width: 100%;
-				height: 12rem;
-				object-fit: cover;
-				border-radius: var(--radius-sm);
-			}
-
-			.card .num {
-				font-weight: 700;
-				font-size: 0.78rem;
-				letter-spacing: 0.16em;
-				text-transform: uppercase;
-				color: var(--accent-dark);
-			}
-
-			.card .title {
-				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
-				font-size: 1.45rem;
-				line-height: 1.1;
-				color: rgb(var(--black));
-			}
-
-			.card .date {
-				color: rgb(var(--gray-dark));
-			}
-
-			.card .sections {
-				list-style: none;
-				margin: 0.25rem 0 0;
-				padding: 0;
-				color: rgb(var(--gray));
-			}
-
-			.card .sections li + li {
-				margin-top: 0.28rem;
-			}
-
-			@media (max-width: 720px) {
-				.home-page {
-					padding-top: 1rem;
-				}
-
-				.hero {
-					grid-template-columns: 1fr;
-					padding: 1rem;
-					gap: 1rem;
-				}
-
-				.hero-actions {
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					gap: 0.65rem;
-					margin-top: 1.1rem;
-				}
-
-				.hero-copy {
-					display: none;
-				}
-
-				.hero-actions .button {
-					width: auto;
-					min-height: 3rem;
-					padding: 0.7rem 0.85rem;
-					font-size: 0.95rem;
-				}
-
-				.hero-actions .button:first-child {
-					grid-column: 1 / -1;
-				}
-
-				.hero-stats {
-					display: none;
-				}
-
-				.hero-image {
-					aspect-ratio: 2 / 1;
-				}
-
-				.hero-panel {
-					display: none;
-				}
-
-				.prologue {
-					grid-template-columns: 1fr;
-					gap: 0.8rem;
-					padding-top: 1.6rem;
-				}
-
-				.prologue-date {
-					position: static;
-				}
-
-				.home-section {
-					display: grid;
-				}
-
-				.carousel .nav {
-					display: none;
-				}
-
-				.carousel-track {
-					padding-inline: 0;
-				}
-
-				.card {
-					min-width: 86vw;
-				}
+			@media (max-width: 450px) {
+				.card.has-image { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+				.card .thumb { height: auto; }
 			}
 		</style>
-		<script is:inline>
-			document.querySelectorAll('[data-carousel]').forEach((carousel) => {
-				const track = carousel.querySelector('.carousel-track');
-				if (!track) return;
-
-				const buttons = Array.from(carousel.querySelectorAll('[data-direction]'));
-				const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-				let scheduled = false;
-
-				const updateButtons = () => {
-					scheduled = false;
-					const maxScroll = Math.max(track.scrollWidth - track.clientWidth, 0);
-					const atStart = track.scrollLeft <= 2;
-					const atEnd = track.scrollLeft >= maxScroll - 2;
-
-					buttons.forEach((button) => {
-						const direction = Number(button.getAttribute('data-direction')) || 1;
-						const disabled = direction < 0 ? atStart : atEnd;
-						button.disabled = disabled;
-						button.setAttribute('aria-disabled', String(disabled));
-					});
-				};
-
-				const requestUpdate = () => {
-					if (scheduled) return;
-					scheduled = true;
-					window.requestAnimationFrame(updateButtons);
-				};
-
-				buttons.forEach((button) => {
-					button.addEventListener('click', () => {
-						const direction = Number(button.getAttribute('data-direction')) || 1;
-						const amount = Math.max(track.clientWidth * 0.82, 280) * direction;
-
-						try {
-							track.scrollBy({ left: amount, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
-						} catch {
-							track.scrollLeft += amount;
-						}
-
-						requestUpdate();
-					});
-				});
-
-				track.addEventListener('scroll', requestUpdate, { passive: true });
-				window.addEventListener('resize', requestUpdate, { passive: true });
-				updateButtons();
-			});
-		</script>
 		<Footer />
 	</body>
 </html>

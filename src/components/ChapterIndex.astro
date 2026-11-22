@@ -1,0 +1,237 @@
+---
+interface Props {
+	headings: { depth: number; slug: string; text: string }[];
+}
+
+const { headings } = Astro.props;
+---
+
+<aside id="indice-scene" class="chapter-index" data-chapter-index>
+	<nav class="chapter-index__rail" aria-label="Indice delle scene">
+		<p class="eyebrow">Mappa di lettura</p>
+		<h2>Indice delle scene</h2>
+		<ol>
+			{headings.map(({ depth, slug, text }) => (
+				<li class:list={{ nested: depth === 3 }}><a href={`#${slug}`}>{text}</a></li>
+			))}
+		</ol>
+	</nav>
+	<button type="button" class="chapter-index__trigger" aria-label="Apri indice delle scene" aria-haspopup="dialog" aria-controls="scene-dialog" data-index-trigger>
+		<svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5">
+			<path d="M4 4h10M4 8h10M4 12h10M1 4h1M1 8h1M1 12h1" />
+		</svg>
+		<span>Scene</span>
+	</button>
+	<dialog id="scene-dialog" class="chapter-index__dialog" aria-labelledby="scene-dialog-title" data-index-dialog>
+		<header>
+			<div>
+				<p class="eyebrow">Mappa di lettura</p>
+				<h2 id="scene-dialog-title">Indice delle scene</h2>
+			</div>
+			<form method="dialog"><button type="submit" autofocus>Chiudi</button></form>
+		</header>
+		<p class="chapter-index__position" data-index-position>Inizio del capitolo</p>
+		<nav aria-label="Scene del capitolo">
+			<ol>
+				{headings.map(({ depth, slug, text }) => (
+					<li class:list={{ nested: depth === 3 }}><a href={`#${slug}`}>{text}</a></li>
+				))}
+			</ol>
+		</nav>
+	</dialog>
+</aside>
+
+<style>
+	.chapter-index {
+		min-width: 0;
+		align-self: start;
+		scroll-margin-top: calc(var(--header-height) + 1rem);
+	}
+
+	.chapter-index__rail {
+		padding: 1rem;
+		border: 1px solid rgba(var(--border), 0.42);
+		border-top: 3px solid var(--accent);
+		border-radius: var(--radius-sm);
+		background: #fffdfa;
+	}
+
+	.eyebrow { margin: 0 0 0.35rem; }
+	h2 { font-size: 1.45rem; font-weight: 400; margin: 0 0 0.7rem; }
+
+	ol {
+		list-style: none;
+		margin: 0;
+		padding: 0.25rem;
+		overscroll-behavior: contain;
+		scrollbar-width: thin;
+	}
+
+	li + li { margin-top: 0.15rem; }
+	.nested { padding-inline-start: 0.7rem; }
+
+	a {
+		display: flex;
+		align-items: center;
+		min-height: 2.75rem;
+		padding: 0.4rem 0.6rem;
+		border-inline-start: 3px solid transparent;
+		border-radius: 0 0.35rem 0.35rem 0;
+		color: rgb(var(--gray-dark));
+		font-size: 0.98rem;
+		line-height: 1.35;
+		text-decoration: none;
+		overflow-wrap: anywhere;
+	}
+
+	a:hover { text-decoration: underline; }
+	a[aria-current="location"] {
+		border-inline-start-color: var(--accent);
+		background: var(--accent-soft);
+		color: var(--accent-dark);
+		font-weight: 700;
+	}
+
+	.chapter-index__trigger { display: none; }
+
+	.chapter-index__dialog {
+		width: min(32rem, calc(100% - 1.5rem));
+		max-height: min(80dvh, 38rem);
+		padding: 1rem;
+		border: 1px solid rgba(var(--border), 0.55);
+		border-radius: var(--radius);
+		background: rgb(var(--paper));
+		color: rgb(var(--black));
+		overflow: hidden;
+	}
+
+	.chapter-index__dialog[open] { display: flex; flex-direction: column; }
+	.chapter-index__dialog::backdrop { background: rgba(var(--storm-night-rgb), 0.72); }
+	.chapter-index__dialog header { display: flex; justify-content: space-between; align-items: start; gap: 0.5rem; }
+	.chapter-index__dialog header button { min-height: 2.75rem; }
+	.chapter-index__dialog nav { min-height: 0; display: grid; }
+	.chapter-index__dialog ol { overflow-y: auto; }
+	.chapter-index__position { margin: 0 0 0.6rem; color: var(--accent-dark); font-size: 0.95rem; }
+
+	@media (min-width: 1024px) {
+		.chapter-index { position: sticky; top: calc(var(--header-height) + 1rem); }
+		.chapter-index__rail ol { max-height: calc(100dvh - var(--header-height) - 8rem); overflow-y: auto; }
+	}
+
+	@media (max-width: 1023px) {
+		.chapter-index[data-ready] .chapter-index__rail { display: none; }
+		.chapter-index[data-ready] .chapter-index__trigger {
+			position: fixed;
+			inset-inline-end: 0.5rem;
+			bottom: max(1rem, env(safe-area-inset-bottom));
+			z-index: 15;
+			display: grid;
+			place-items: center;
+			gap: 0.2rem;
+			width: 2.85rem;
+			min-height: 3.1rem;
+			padding: 0.35rem 0.2rem;
+			border: 1px solid var(--night-line);
+			border-radius: var(--radius-sm);
+			background: var(--midnight-raised);
+			box-shadow: 0 4px 12px #10192325;
+			color: var(--gold);
+			font-size: 0.75rem;
+			line-height: 1;
+		}
+	}
+</style>
+
+<script>
+	const index = document.querySelector<HTMLElement>('[data-chapter-index]');
+	if (index) {
+		const rail = index.querySelector('nav');
+		const dialog = index.querySelector('dialog');
+		const trigger = index.querySelector<HTMLButtonElement>('[data-index-trigger]');
+		const position = index.querySelector('[data-index-position]');
+		const desktop = window.matchMedia('(min-width: 1024px)');
+		const decodeAnchor = (hash: string) => {
+			try { return decodeURIComponent(hash.slice(1)); } catch { return ''; }
+		};
+		const dialogLinks = new Map(Array.from(dialog?.querySelectorAll('a') ?? [], link => [decodeAnchor(link.hash), link]));
+		const scenes = Array.from(rail?.querySelectorAll('a') ?? []).flatMap(link => {
+			const id = decodeAnchor(link.hash);
+			const target = document.getElementById(id);
+			return target ? [{ link, target, dialogLink: dialogLinks.get(id) }] : [];
+		});
+		let active = -1;
+		let frame = 0;
+
+		const reveal = (link?: HTMLAnchorElement, keepFocus = false) => {
+			const list = link?.closest('ol');
+			if (!list || !link || (keepFocus && list.contains(document.activeElement))) return;
+			const bounds = list.getBoundingClientRect();
+			const row = link.getBoundingClientRect();
+			if (row.top < bounds.top) list.scrollTop += row.top - bounds.top;
+			else if (row.bottom > bounds.bottom) list.scrollTop += row.bottom - bounds.bottom;
+		};
+
+		const update = () => {
+			frame = 0;
+			const header = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--header-height')) || 88;
+			const threshold = header + 48;
+			let low = 0;
+			let high = scenes.length;
+			while (low < high) {
+				const mid = (low + high) >>> 1;
+				if (scenes[mid].target.getBoundingClientRect().top <= threshold) low = mid + 1;
+				else high = mid;
+			}
+			const next = low - 1;
+			if (next === active) return;
+			scenes[active]?.link.removeAttribute('aria-current');
+			scenes[active]?.dialogLink?.removeAttribute('aria-current');
+			active = next;
+			const scene = scenes[active];
+			scene?.link.setAttribute('aria-current', 'location');
+			scene?.dialogLink?.setAttribute('aria-current', 'location');
+			if (position) position.textContent = scene ? `Ora leggi: ${scene.link.textContent}` : 'Inizio del capitolo';
+			if (desktop.matches) reveal(scene?.link, true);
+		};
+
+		const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
+		window.addEventListener('scroll', schedule, { passive: true });
+		window.addEventListener('resize', schedule);
+		window.addEventListener('hashchange', schedule);
+		window.addEventListener('load', schedule, { once: true });
+		document.fonts.ready.then(schedule);
+		schedule();
+
+		if (dialog && trigger && typeof dialog.showModal === 'function') {
+			index.setAttribute('data-ready', '');
+			index.parentElement?.setAttribute('data-index-ready', '');
+			const showIndex = () => {
+				if (desktop.matches || dialog.open) return;
+				dialog.showModal();
+				reveal(scenes[active]?.dialogLink);
+			};
+			const openFromHash = () => { if (location.hash === '#indice-scene') showIndex(); };
+			trigger.addEventListener('click', showIndex);
+			window.addEventListener('hashchange', openFromHash);
+			openFromHash();
+			desktop.addEventListener('change', () => {
+				if (desktop.matches) {
+					if (dialog.open) dialog.close();
+					requestAnimationFrame(() => reveal(scenes[active]?.link, true));
+				}
+				schedule();
+			});
+		}
+
+		index.addEventListener('click', (event) => {
+			if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+			if (!(event.target instanceof Element)) return;
+			const link = event.target.closest<HTMLAnchorElement>('a');
+			const target = link && document.getElementById(decodeAnchor(link.hash));
+			if (!target) return;
+			if (dialog?.open) dialog.close();
+			target.tabIndex = -1;
+			target.focus({ preventScroll: true });
+		});
+	}
+</script>

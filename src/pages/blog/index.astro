@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
 import Footer from '../../components/Footer.astro';
 import Header from '../../components/Header.astro';
+import { chapterCovers } from '../../utils/chapter-covers';
 
 const pageDescription = 'Indice ricercabile delle avventure di Storm King\'s Thunder: capitoli, scene e luoghi chiave del diario dei Risolutori.';
 const rawPosts = (await getCollection('blog'))
@@ -14,15 +15,16 @@ const totalPosts = rawPosts.length;
 const posts = await Promise.all(
 	rawPosts.map(async (entry) => {
 		const { headings } = await render(entry);
+		const mainHeading = headings.find(({ depth }) => depth === 1) ?? headings.find(({ depth }) => depth === 2);
 		const sections = headings
-			.filter((h) => (h.depth === 1 || h.depth === 2 || h.depth === 3) && h.text.trim() !== entry.data.title.trim())
+			.filter((h) => (h.depth === 1 || h.depth === 2 || h.depth === 3) && h.slug !== mainHeading?.slug && h.text.trim() !== entry.data.title.trim())
 			.map(({ depth, slug, text }) => ({
 				depth,
 				slug,
 				text,
 				isChapter: /^(?:\d+°\s*)?Capitolo\s+\d+\b|^\d+°\s*Capitolo\b/i.test(text),
 			}));
-		return { entry, sections };
+		return { entry, sections, chapterTitle: mainHeading?.text ?? entry.data.title };
 	})
 );
 const totalSections = posts.reduce((total, post) => total + post.sections.length, 0);
@@ -36,14 +38,13 @@ const latestPost = rawPosts.at(-1);
 		<style>
 			.archive-page {
 				padding: 2.2rem 0 4rem;
+				max-width: 69rem;
 			}
-
 			.archive-shell {
 				padding: 2rem;
 				border: 1px solid rgba(var(--border), 0.45);
 				border-radius: var(--radius);
-				background:
-					linear-gradient(180deg, rgba(var(--storm-ivory-rgb), 0.92), rgba(var(--storm-mist-rgb), 0.24));
+				background: rgb(var(--paper));
 				box-shadow: var(--box-shadow);
 			}
 
@@ -57,21 +58,15 @@ const latestPost = rawPosts.at(-1);
 				border-bottom: 1px solid rgba(var(--border), 0.55);
 			}
 
+			.archive-intro h1 {
+				font-weight: 400;
+				letter-spacing: -0.045em;
+				font-size: clamp(2.45rem, 1.6rem + 4vw, 5rem);
+			}
+
 			.archive-intro p:last-child {
 				max-width: 34rem;
 				margin-bottom: 0;
-			}
-
-			.archive-meta {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.65rem;
-				padding: 0.8rem 1rem;
-				border: 1px solid rgba(var(--border), 0.5);
-				border-radius: 999px;
-				background: rgba(var(--storm-ivory-rgb), 0.78);
-				color: rgb(var(--gray-dark));
-				font-weight: 700;
 			}
 
 			.archive-tools {
@@ -87,12 +82,14 @@ const latestPost = rawPosts.at(-1);
 				gap: 0.35rem;
 			}
 
+			.search-field[hidden] {
+				display: none;
+			}
+
 			.search-field label {
 				color: var(--accent-dark);
-				font-size: 0.78rem;
+				font-size: 0.95rem;
 				font-weight: 700;
-				letter-spacing: 0.14em;
-				text-transform: uppercase;
 			}
 
 			.search-field input {
@@ -140,15 +137,16 @@ const latestPost = rawPosts.at(-1);
 				margin: 1.8rem 0 0;
 				padding: 0;
 				display: grid;
-				grid-template-columns: repeat(2, minmax(0, 1fr));
-				gap: 1rem;
+				grid-template-columns: minmax(0, 1fr);
+				gap: 0.5rem;
 			}
 
 			.toc > li {
-				padding: 1.2rem;
+				padding: 0.7rem clamp(0.7rem, 2vw, 1.2rem);
 				border: 1px solid rgba(var(--border), 0.4);
 				border-radius: calc(var(--radius) - 6px);
-				background: rgba(var(--storm-ivory-rgb), 0.65);
+				background: #fffdfa;
+				box-shadow: 0 4px 14px #18212a0a;
 			}
 
 			.toc > li[hidden] {
@@ -163,6 +161,30 @@ const latestPost = rawPosts.at(-1);
 				color: rgb(var(--black));
 			}
 
+			.toc-post .entry {
+				min-width: 0;
+				flex: 1;
+			}
+
+			.toc-post .cover {
+				flex: 0 0 auto;
+				width: clamp(3.15rem, 8vw, 6.5rem);
+				aspect-ratio: 16 / 10;
+				object-fit: cover;
+				border-radius: 0.35rem;
+			}
+
+			.toc-post .num-text {
+				font-variant-numeric: tabular-nums;
+			}
+
+			.toc-post .num-label {
+				font-size: 0.62rem;
+				line-height: 1;
+				text-transform: uppercase;
+				letter-spacing: 0.06em;
+			}
+
 			.toc-post:hover {
 				color: var(--accent-dark);
 			}
@@ -170,20 +192,23 @@ const latestPost = rawPosts.at(-1);
 			.toc-post .num {
 				display: inline-grid;
 				place-items: center;
-				width: 2.8rem;
-				height: 2.8rem;
-				border-radius: 50%;
-				background: rgba(var(--storm-mist-rgb), 0.18);
-				color: var(--accent-dark);
+				align-content: center;
+				gap: 0.2rem;
+				width: 3.15rem;
+				min-height: 3.15rem;
+				border-radius: var(--radius-sm);
+				background: var(--midnight-raised);
+				color: var(--gold);
 				font-weight: 700;
 				flex: 0 0 auto;
 			}
 
 			.toc-post .title {
 				display: block;
-				font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
-				font-size: 1.45rem;
-				line-height: 1.05;
+				line-height: 1.12;
+				font-family: var(--display-font);
+				font-size: clamp(1.2rem, 1.05rem + 0.8vw, 1.65rem);
+				overflow-wrap: anywhere;
 				color: rgb(var(--black));
 			}
 
@@ -195,7 +220,7 @@ const latestPost = rawPosts.at(-1);
 			}
 
 			.sections-details {
-				margin-top: 1rem;
+				margin-top: 0.55rem;
 				border-top: 1px solid rgba(var(--border), 0.45);
 			}
 
@@ -204,7 +229,8 @@ const latestPost = rawPosts.at(-1);
 				align-items: center;
 				justify-content: space-between;
 				gap: 0.8rem;
-				padding-top: 0.8rem;
+				padding-block: 0.6rem;
+				min-height: 2.75rem;
 				color: var(--accent-dark);
 				cursor: pointer;
 				font-weight: 700;
@@ -279,20 +305,61 @@ const latestPost = rawPosts.at(-1);
 				color: rgb(var(--gray));
 			}
 
+			.sections-details[hidden],
+			.sections-details summary[hidden],
+			.sections li[hidden] {
+				display: none;
+			}
+
+			.toc[data-filtered] .sections {
+				margin: 0.5rem 0 0;
+			}
+
+			.toc[data-filtered] .sections li {
+				margin: 0.35rem 0;
+				padding: 0;
+				border: 0;
+				opacity: 1;
+			}
+
+			.toc[data-filtered] .sections a {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 0.75rem;
+				min-height: 2.75rem;
+				padding: 0.45rem 0.7rem;
+				border-inline-start: 3px solid var(--accent);
+				border-radius: 0 0.35rem 0.35rem 0;
+				background: var(--accent-soft);
+				color: var(--accent-dark);
+				font-weight: 700;
+			}
+
+			.toc[data-filtered] .sections a::after {
+				content: '→' / '';
+			}
+
+			.toc[data-filtered] .sections a:hover {
+				text-decoration: underline;
+			}
+
+			.filter-count {
+				margin: 0;
+				color: var(--accent-dark);
+				font-weight: 700;
+			}
+
+			.filter-count:not(:empty) {
+				margin-top: 0.75rem;
+			}
+
 			.empty-state[hidden] {
 				display: none;
 			}
 
 			@media (max-width: 900px) {
 				.archive-tools {
-					grid-template-columns: 1fr;
-				}
-
-				.archive-summary {
-					justify-content: flex-start;
-				}
-
-				.toc {
 					grid-template-columns: 1fr;
 				}
 			}
@@ -312,17 +379,15 @@ const latestPost = rawPosts.at(-1);
 
 				.archive-summary {
 					display: grid;
-					grid-template-columns: 1fr 1fr;
+					grid-template-columns: minmax(0, 1fr) auto;
 				}
 
 				.archive-summary span,
 				.archive-summary a {
 					justify-content: center;
 					border-radius: var(--radius-sm);
-				}
-
-				.archive-summary a {
-					grid-column: 1 / -1;
+					padding: 0.45rem 0.6rem;
+					font-size: 0.9rem;
 				}
 
 				.toc > li {
@@ -339,37 +404,37 @@ const latestPost = rawPosts.at(-1);
 					<div>
 						<p class="eyebrow">Archivio</p>
 						<h1>Indice delle avventure</h1>
-						<p>Trova un capitolo, una scena o un luogo senza perdere il filo della campagna.</p>
+						<p>Cerca per numero di avventura, titolo o nome della scena.</p>
 					</div>
-					<p class="archive-meta">{totalPosts} capitoli pubblicati</p>
 				</div>
 				<div class="archive-tools" data-archive-tools>
-					<div class="search-field">
+					<div class="search-field" hidden data-search-field>
 						<label for="archive-search">Cerca nell’archivio</label>
-						<input id="archive-search" type="search" placeholder="Nightstone, Harshnag, Waterdeep..." autocomplete="off" data-archive-search />
+						<input id="archive-search" type="search" placeholder="Numero, titolo o scena" autocomplete="off" data-archive-search />
 					</div>
-					<div class="archive-summary" aria-live="polite">
-						<span data-archive-count>{totalPosts} capitoli</span>
-						<span>{totalSections} scene</span>
+					<div class="archive-summary">
+						<span>{totalPosts} capitoli · {totalSections} scene in archivio</span>
 						{latestPost && <a href={`${base}blog/${latestPost.id}/`}>Ultimo capitolo</a>}
 					</div>
 				</div>
+				<p class="filter-count" data-archive-count role="status"></p>
 				<ol class="toc" data-archive-list>
-					{posts.map(({ entry, sections }) => (
-						<li data-archive-item data-search={`${entry.data.title} ${sections.map(({ text }) => text).join(' ')}`.toLocaleLowerCase('it-IT')}>
+					{posts.map(({ entry, sections, chapterTitle }) => (
+						<li data-archive-item data-number={parseInt(entry.id)} data-search={`${parseInt(entry.id)} ${entry.data.title} ${chapterTitle}`}>
 							<a class="toc-post" href={`${base}blog/${entry.id}/`}>
-								<span class="num">{parseInt(entry.id)}</span>
-								<span>
-									<span class="title">{entry.data.title}</span>
+								<span class="num"><span class="num-label">Avv.</span><span class="num-text">{String(parseInt(entry.id)).padStart(2, '0')}</span></span>
+								<span class="entry">
+									<span class="title">{chapterTitle}</span>
 									<span class="count">{sections.length} snodi narrativi</span>
 								</span>
+								{chapterCovers[entry.id] && <img class="cover" src={`${base}images/sessions/${chapterCovers[entry.id]}`} alt="" loading="lazy" decoding="async" />}
 							</a>
 							{sections.length > 0 && (
 								<details class="sections-details">
-									<summary>Scene principali</summary>
+									<summary>Indice delle scene</summary>
 									<ul class="sections">
 										{sections.map(({ depth, slug, text, isChapter }) => (
-											<li class={`depth-${depth}${isChapter ? ' chapter-title' : ''}`}>
+											<li class={`depth-${depth}${isChapter ? ' chapter-title' : ''}`} data-archive-scene>
 												<a href={`${base}blog/${entry.id}/#${slug}`}>{text}</a>
 											</li>
 										))}
@@ -385,35 +450,60 @@ const latestPost = rawPosts.at(-1);
 		<Footer />
 		<script is:inline>
 			const search = document.querySelector('[data-archive-search]');
-			const items = Array.from(document.querySelectorAll('[data-archive-item]'));
+			const list = document.querySelector('[data-archive-list]');
 			const count = document.querySelector('[data-archive-count]');
 			const empty = document.querySelector('[data-archive-empty]');
 
 			if (search instanceof HTMLInputElement) {
+				search.closest('[data-search-field]')?.removeAttribute('hidden');
+				const normalize = (value) => value.toLocaleLowerCase('it-IT').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, ' ');
+				const items = Array.from(list.querySelectorAll('[data-archive-item]'), (item) => ({
+					item,
+					number: Number(item.dataset.number),
+					text: normalize(item.dataset.search),
+					details: item.querySelector('details'),
+					summary: item.querySelector('summary'),
+					scenes: Array.from(item.querySelectorAll('[data-archive-scene]'), (scene) => ({
+						scene,
+						text: normalize(scene.textContent),
+					})),
+					wasOpen: false,
+				}));
+				let wasFiltering = false;
 				const update = () => {
-					const query = search.value.trim().toLocaleLowerCase('it-IT');
-					let visible = 0;
-
-					items.forEach((item) => {
-						const text = item.getAttribute('data-search') || '';
-						const match = query.length === 0 || text.includes(query);
-						item.hidden = !match;
-						if (match) visible += 1;
-
-						const details = item.querySelector('details');
-						if (details instanceof HTMLDetailsElement) {
-							details.open = query.length > 0 && match;
+					const query = normalize(search.value).trim().split(/\s+/).filter(Boolean);
+					const filtering = query.length > 0;
+					const numberQuery = query.length === 1 && /^\d+$/.test(query[0]) ? Number(query[0]) : null;
+					list.toggleAttribute('data-filtered', filtering);
+					let chapters = 0;
+					let scenes = 0;
+					for (const entry of items) {
+						const matchesChapter = numberQuery === null
+							? query.every((word) => entry.text.includes(word))
+							: entry.number === numberQuery;
+						let sceneCount = 0;
+						for (const { scene, text } of entry.scenes) {
+							const matchesScene = filtering && numberQuery === null && (matchesChapter
+								? query.every((word) => text.includes(word))
+								: query.every((word) => entry.text.includes(word) || text.includes(word)));
+							scene.hidden = filtering && !matchesScene;
+							if (matchesScene) sceneCount++;
 						}
-					});
-
-					if (count) {
-						const label = visible === 1 ? 'capitolo trovato' : 'capitoli trovati';
-						count.textContent = query.length > 0 ? `${visible} ${label}` : `${items.length} capitoli`;
+						entry.item.hidden = !matchesChapter && sceneCount === 0;
+						if (!entry.item.hidden) chapters++;
+						scenes += sceneCount;
+						if (!entry.details) continue;
+						if (filtering && !wasFiltering) entry.wasOpen = entry.details.open;
+						entry.details.hidden = filtering && sceneCount === 0;
+						entry.summary.hidden = filtering;
+						if (filtering) entry.details.open = sceneCount > 0;
+						else if (wasFiltering) entry.details.open = entry.wasOpen;
 					}
-
-					if (empty) {
-						empty.hidden = visible > 0;
-					}
+					count.textContent = filtering
+						? `${chapters} ${chapters === 1 ? 'capitolo trovato' : 'capitoli trovati'} · ${scenes} ${scenes === 1 ? 'scena corrispondente' : 'scene corrispondenti'}`
+						: '';
+					empty.hidden = chapters > 0;
+					wasFiltering = filtering;
 				};
 
 				search.addEventListener('input', update);
